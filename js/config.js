@@ -7,4 +7,4 @@
  *
  * Приклад: 'https://litera-sync.твій-акаунт.workers.dev'
  */
-export const SYNC_URL = '';
+export const SYNC_URL = 'https://litera-sync.antony14026002.workers.dev';
