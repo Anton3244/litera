@@ -57,7 +57,8 @@ async function route() {
     await entry.render(viewEl, parts.slice(1));
   } catch (err) {
     console.error(err);
-    viewEl.innerHTML = `<div class="empty"><span class="empty__emoji">😿</span>
+    viewEl.innerHTML = `<div class="empty">
+      <img class="empty__art" src="assets/art/empty-error.webp" alt="">
       Не вдалося відкрити цей екран.<br><small>${err.message}</small></div>`;
   }
   refreshStats();

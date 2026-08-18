@@ -79,21 +79,27 @@ function weekHtml() {
 }
 
 function sectionHtml(section, progress) {
-  if (!section.topics.length) {
-    return `
-      <div class="section-h">
-        <span class="section-h__title">${section.title}</span>
-        <span class="section-h__line"></span>
-        <span class="section-h__title" style="color:var(--text-faint)">скоро</span>
-      </div>`;
-  }
-
-  return `
+  const head = `
     <div class="section-h">
       <span class="section-h__title">${section.title}</span>
       <span class="section-h__line"></span>
-    </div>
-    ${section.topics.map(t => topicHtml(t, progress[t.id])).join('')}`;
+    </div>`;
+
+  if (!section.topics.length) return head + soonHtml(section);
+  return head + section.topics.map(t => topicHtml(t, progress[t.id])).join('');
+}
+
+/** Розділ, який ще не наповнили: показуємо обкладинку приглушено. */
+function soonHtml(section) {
+  return `
+    <div class="tile tile--soon">
+      ${section.cover ? `<img class="tile__cover" src="${section.cover}" alt="" loading="lazy">` : ''}
+      <div class="tile__veil"></div>
+      <div class="tile__body">
+        <div class="tile__title">${section.title}</div>
+        <div class="tile__meta"><span>матеріали готуються</span></div>
+      </div>
+    </div>`;
 }
 
 function topicHtml(topic, p) {
@@ -102,19 +108,18 @@ function topicHtml(topic, p) {
   const pct = Math.round((theory + quiz) * 100);
   const done = !!p?.completed_at;
 
-  const meta = [];
-  meta.push(`${topic.author}`);
-  if (p?.best_score) meta.push(`найкраще ${Math.round(p.best_score * 100)}%`);
-  else meta.push(`${topic.minutes} хв`);
+  const meta = [topic.author];
+  meta.push(p?.best_score ? `найкраще ${Math.round(p.best_score * 100)}%` : `${topic.minutes} хв`);
 
   return `
-    <button class="topic ${done ? 'is-done' : ''}" data-topic="${topic.id}">
-      <span class="topic__badge">${done ? '✓' : topic.icon}</span>
-      <span class="topic__body">
-        <span class="topic__title">${topic.title}</span>
-        <span class="topic__meta">${meta.map(m => `<span>${m}</span>`).join('')}</span>
-        <span class="topic__bar"><i style="width:${pct}%"></i></span>
+    <button class="tile ${done ? 'is-done' : ''}" data-topic="${topic.id}">
+      ${topic.cover ? `<img class="tile__cover" src="${topic.cover}" alt="" loading="lazy">` : ''}
+      <span class="tile__veil"></span>
+      <span class="tile__body">
+        <span class="tile__title">${topic.title}</span>
+        <span class="tile__meta">${meta.map(m => `<span>${m}</span>`).join('')}</span>
       </span>
-      <span class="topic__chev">›</span>
+      ${done ? '<span class="tile__done">✓</span>' : ''}
+      <span class="tile__bar"><i style="width:${pct}%"></i></span>
     </button>`;
 }

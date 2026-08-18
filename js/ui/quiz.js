@@ -35,15 +35,16 @@ function showResult(root, topic, results, ranOut) {
   const fresh = store.checkAwards({ perfect });
   refreshStats();
 
-  const mood = ranOut ? { emoji: '💛', title: 'Життя скінчились' }
-    : perfect ? { emoji: '🏆', title: 'Ідеально!' }
-      : score >= 0.8 ? { emoji: '🎉', title: 'Тема пройдена!' }
-        : score >= 0.5 ? { emoji: '💪', title: 'Уже краще' }
-          : { emoji: '🌱', title: 'Ще трохи попрацюємо' };
+  const ART = 'assets/art/';
+  const mood = ranOut ? { art: 'result-hearts-out', title: 'Життя скінчились' }
+    : perfect ? { art: 'result-good', title: 'Ідеально!' }
+      : score >= 0.8 ? { art: 'result-mid', title: 'Тема пройдена!' }
+        : score >= 0.5 ? { art: 'result-mid', title: 'Уже краще' }
+          : { art: 'result-low', title: 'Ще трохи попрацюємо' };
 
   root.innerHTML = `
     <div class="result">
-      <div class="result__emoji">${mood.emoji}</div>
+      <img class="result__art" src="${ART}${mood.art}.webp" alt="">
       <h1 class="result__title">${mood.title}</h1>
       <p class="result__sub">${topic.title}</p>
 
@@ -55,7 +56,9 @@ function showResult(root, topic, results, ranOut) {
 
       ${fresh.length ? `<div class="card" style="text-align:left">
         <div class="row__label" style="margin-bottom:8px">Нові досягнення</div>
-        ${fresh.map(a => `<div class="row"><div><div class="row__label">${a.icon} ${a.title}</div>
+        ${fresh.map(a => `<div class="row" style="gap:14px">
+          <img class="award__img" src="${a.img}" alt="">
+          <div style="flex:1"><div class="row__label">${a.title}</div>
           <div class="row__hint">${a.hint}</div></div></div>`).join('')}
       </div>` : ''}
 

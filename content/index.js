@@ -3,41 +3,55 @@
 //
 // Щоб додати тему: створи файл у content/topics/ і додай рядок у потрібний розділ.
 
+const ART = 'assets/art/';
+
 export const SECTIONS = [
   {
     id: 'folklore',
     title: 'Усна народна творчість',
+    cover: ART + 'cover-folklore.webp',
     topics: [],
   },
   {
     id: 'davnya',
     title: 'Давня українська література',
     topics: [
-      { id: 'slovo-o-polku', title: '«Слово о полку Ігоревім»', author: 'Пам’ятка XII ст.', icon: '🛡️', minutes: 12 },
+      {
+        id: 'slovo-o-polku', title: '«Слово о полку Ігоревім»', author: 'Пам’ятка XII ст.',
+        icon: '🛡️', minutes: 12, cover: ART + 'cover-slovo-o-polku.webp',
+      },
     ],
   },
   {
     id: 'nova',
     title: 'Нова українська література',
     topics: [
-      { id: 'shevchenko-kateryna', title: '«Катерина»', author: 'Тарас Шевченко', icon: '🌾', minutes: 14 },
+      {
+        id: 'shevchenko-kateryna', title: '«Катерина»', author: 'Тарас Шевченко',
+        icon: '🌾', minutes: 14, cover: ART + 'cover-shevchenko-kateryna.webp',
+      },
     ],
   },
   {
     id: 'xx',
     title: 'Література ХХ століття',
+    cover: ART + 'cover-xx.webp',
     topics: [],
   },
   {
     id: 'suchasna',
     title: 'Сучасна українська література',
+    cover: ART + 'cover-suchasna.webp',
     topics: [],
   },
   {
     id: 'teoriya',
     title: 'Теорія літератури',
     topics: [
-      { id: 'rody-i-zhanry', title: 'Роди й жанри літератури', author: 'Базове поняття', icon: '📚', minutes: 10 },
+      {
+        id: 'rody-i-zhanry', title: 'Роди й жанри літератури', author: 'Базове поняття',
+        icon: '📚', minutes: 10, cover: ART + 'cover-rody-i-zhanry.webp',
+      },
     ],
   },
 ];

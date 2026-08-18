@@ -1,7 +1,17 @@
 // Service worker: офлайн-режим і щоденне нагадування.
 // Піднімай CACHE_VERSION після зміни файлів — інакше браузер віддасть старі.
 
-const CACHE_VERSION = 'litera-v1';
+const CACHE_VERSION = 'litera-v2';
+
+const ART = [
+  'cover-slovo-o-polku', 'cover-shevchenko-kateryna', 'cover-rody-i-zhanry',
+  'cover-folklore', 'cover-xx', 'cover-suchasna',
+  'award-first-lesson', 'award-perfect', 'award-streak-3', 'award-streak-7',
+  'award-streak-30', 'award-xp-500', 'award-xp-2000', 'award-reviewer',
+  'result-good', 'result-mid', 'result-low', 'result-hearts-out',
+  'empty-practice', 'empty-error',
+].map(n => `assets/art/${n}.webp`);
+
 const SHELL = [
   './',
   'index.html',
@@ -9,6 +19,7 @@ const SHELL = [
   'manifest.webmanifest',
   'assets/icon.svg',
   'assets/icon-192.png',
+  ...ART,
   'js/app.js',
   'js/db.js',
   'js/store.js',
@@ -22,6 +33,9 @@ const SHELL = [
   'js/ui/stats.js',
   'js/ui/settings.js',
   'content/index.js',
+  'content/topics/slovo-o-polku.js',
+  'content/topics/shevchenko-kateryna.js',
+  'content/topics/rody-i-zhanry.js',
 ];
 
 self.addEventListener('install', event => {

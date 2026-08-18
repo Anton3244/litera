@@ -74,7 +74,9 @@ function topicRow(meta, p) {
   const best = p?.best_score ? Math.round(p.best_score * 100) : 0;
   return `
     <div class="card" style="display:flex;align-items:center;gap:12px;padding:13px 14px">
-      <span class="topic__badge" style="width:38px;height:38px;font-size:17px;border-radius:12px">${meta.icon}</span>
+      ${meta.cover
+      ? `<img src="${meta.cover}" alt="" style="width:44px;height:44px;border-radius:12px;object-fit:cover;flex:none">`
+      : `<span class="topic__badge" style="width:44px;height:44px;font-size:17px;border-radius:12px">${meta.icon}</span>`}
       <div style="flex:1;min-width:0">
         <div class="row__label" style="font-size:14px">${meta.title}</div>
         <div class="topic__bar"><i style="width:${best}%"></i></div>

@@ -81,7 +81,8 @@ export async function renderPracticeRun(root, [modeKey]) {
   const questions = mode.pick(flatten(topics));
 
   if (!questions.length) {
-    root.innerHTML = `<div class="empty"><span class="empty__emoji">✨</span>
+    root.innerHTML = `<div class="empty">
+      <img class="empty__art" src="assets/art/empty-practice.webp" alt="">
       Тут поки порожньо. Пройди кілька тем — і питання з’являться.
       <div style="margin-top:20px"><button class="btn btn--ghost" data-nav="home">До тем</button></div></div>`;
     return;
@@ -108,7 +109,7 @@ function showResult(root, mode, results) {
 
   root.innerHTML = `
     <div class="result">
-      <div class="result__emoji">${pct >= 80 ? '🌟' : pct >= 50 ? '💪' : '🌱'}</div>
+      <img class="result__art" src="assets/art/${pct >= 80 ? 'result-good' : pct >= 50 ? 'result-mid' : 'result-low'}.webp" alt="">
       <h1 class="result__title">${mode.title} — готово</h1>
       <p class="result__sub">${correct} з ${total} правильних</p>
 
@@ -131,10 +132,13 @@ function awardsHtml() {
   const earned = store.earnedAwards();
   return `<div class="card">${store.AWARDS.map(a => {
     const has = !!earned[a.code];
-    return `<div class="row" style="${has ? '' : 'opacity:.45'}">
-      <div><div class="row__label">${a.icon} ${a.title}</div>
-      <div class="row__hint">${a.hint}</div></div>
-      <div>${has ? '✓' : '🔒'}</div>
+    return `<div class="row" style="gap:14px">
+      <img class="award__img ${has ? '' : 'award__img--locked'}" src="${a.img}" alt="">
+      <div style="flex:1">
+        <div class="row__label" style="${has ? '' : 'color:var(--text-dim)'}">${a.title}</div>
+        <div class="row__hint">${a.hint}</div>
+      </div>
+      <div style="color:${has ? 'var(--ok)' : 'var(--text-faint)'}">${has ? '✓' : '🔒'}</div>
     </div>`;
   }).join('')}</div>`;
 }
