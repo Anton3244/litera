@@ -35,6 +35,7 @@ export async function renderLesson(root, [topicId]) {
         <div class="slide__kicker">${s.kicker} · ${i + 1} з ${topic.slides.length}</div>
         <h2 class="slide__title">${s.title}</h2>
         <div class="slide__body">${s.html}</div>
+        ${s.video ? videoHtml(s.video) : ''}
       </article>`;
 
     bar.style.width = `${((i + 1) / topic.slides.length) * 100}%`;
@@ -44,6 +45,19 @@ export async function renderLesson(root, [topicId]) {
     store.saveTheoryProgress(topicId, i + 1, last);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  // Плитка з відео вантажить ютуб лише після натискання: сторінка лишається
+  // легкою, а без інтернету просто показує заглушку замість програвача.
+  host.addEventListener('click', e => {
+    const plate = e.target.closest('[data-video]');
+    if (!plate) return;
+    const id = plate.dataset.video;
+    plate.outerHTML = `<div class="video video--live">
+      <iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0"
+        title="Відео до теми" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen loading="lazy"></iframe>
+    </div>`;
+  });
 
   nextBtn.addEventListener('click', () => {
     if (i === topic.slides.length - 1) {
@@ -60,4 +74,22 @@ export async function renderLesson(root, [topicId]) {
   });
 
   draw();
+}
+
+/**
+ * @param {{id:string,title:string,author?:string,minutes?:number}} video
+ */
+function videoHtml(video) {
+  const meta = [video.author, video.minutes ? `${video.minutes} хв` : null].filter(Boolean).join(' · ');
+  return `
+    <button class="video" data-video="${video.id}">
+      <img class="video__thumb" src="https://i.ytimg.com/vi/${video.id}/hqdefault.jpg" alt=""
+           loading="lazy" onerror="this.remove()">
+      <span class="video__veil"></span>
+      <span class="video__play">▶</span>
+      <span class="video__caption">
+        <span class="video__title">${video.title}</span>
+        ${meta ? `<span class="video__meta">${meta}</span>` : ''}
+      </span>
+    </button>`;
 }
