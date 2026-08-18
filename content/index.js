@@ -4,6 +4,8 @@
 // Розділи названо так само, як в офіційній програмі НМТ.
 // Повний перелік творів і те, що ще лишилось написати, — у ROADMAP.md.
 
+import { VIDEOS } from './videos.js';
+
 const ART = 'assets/art/';
 
 export const SECTIONS = [
@@ -124,6 +126,19 @@ export async function loadTopic(id) {
 
   const module = await import(`./topics/${id}.js`);
   const topic = { ...meta, ...module.default };
+
+  // Відео зберігаються окремо (content/videos.js) — так їх легко міняти,
+  // не чіпаючи написаний вручну текст теми.
+  const videos = VIDEOS[id];
+  if (videos?.length) {
+    topic.slides = [...topic.slides, {
+      kicker: 'Відеорозбір',
+      title: videos.length > 1 ? 'Подивись, як це пояснюють' : 'Подивись розбір',
+      html: '<p>Те саме, але голосом і з прикладами. Вмикається за натисканням.</p>',
+      videos,
+    }];
+  }
+
   loaded.set(id, topic);
   return topic;
 }

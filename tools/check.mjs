@@ -25,11 +25,11 @@ for (const meta of allTopicMeta()) {
   if (!topic.slides?.length) problems.push(`${meta.id}: немає слайдів`);
   for (const [i, slide] of (topic.slides ?? []).entries()) {
     if (!slide.title) problems.push(`${meta.id}: слайд ${i + 1} без заголовка`);
-    if (slide.video) {
-      if (!/^[\w-]{11}$/.test(slide.video.id ?? '')) {
-        problems.push(`${meta.id}: слайд ${i + 1} — дивний ідентифікатор відео «${slide.video.id}»`);
+    for (const v of slide.videos ?? (slide.video ? [slide.video] : [])) {
+      if (!/^[\w-]{11}$/.test(v.id ?? '')) {
+        problems.push(`${meta.id}: слайд ${i + 1} — дивний ідентифікатор відео «${v.id}»`);
       } else {
-        videos.push({ topic: meta.id, ...slide.video });
+        videos.push({ topic: meta.id, ...v });
       }
     }
   }

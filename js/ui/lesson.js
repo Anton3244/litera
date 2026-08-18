@@ -35,7 +35,7 @@ export async function renderLesson(root, [topicId]) {
         <div class="slide__kicker">${s.kicker} · ${i + 1} з ${topic.slides.length}</div>
         <h2 class="slide__title">${s.title}</h2>
         <div class="slide__body">${s.html}</div>
-        ${s.video ? videoHtml(s.video) : ''}
+        ${(s.videos ?? (s.video ? [s.video] : [])).map(videoHtml).join('')}
       </article>`;
 
     bar.style.width = `${((i + 1) / topic.slides.length) * 100}%`;
