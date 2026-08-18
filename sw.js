@@ -1,7 +1,7 @@
 // Service worker: офлайн-режим і щоденне нагадування.
 // Піднімай CACHE_VERSION після зміни файлів — інакше браузер віддасть старі.
 
-const CACHE_VERSION = 'litera-v8';
+const CACHE_VERSION = 'litera-v9';
 
 const ART = [
   'cover-slovo-o-polku', 'cover-shevchenko-kateryna', 'cover-rody-i-zhanry',
@@ -35,7 +35,7 @@ const SHELL = [
   'content/index.js',
   'content/videos.js',
   ...[
-    'pisni-marusi-churay', 'istorychni-pisni', 'duma-marusya-bohuslavka',
+    'obryadovi-pisni', 'pisni-marusi-churay', 'istorychni-pisni', 'duma-marusya-bohuslavka',
     'balada-oy-letila-strila', 'povist-mynulykh-lit', 'slovo-o-polku', 'skovoroda',
     'kotlyarevsky-eneida', 'kotlyarevsky-natalka', 'shevchenko-kateryna',
     'shevchenko-zapovit', 'shevchenko-kavkaz', 'shevchenko-son', 'shevchenko-i-mertvym',

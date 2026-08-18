@@ -15,8 +15,12 @@ export const SECTIONS = [
     cover: ART + 'cover-folklore.webp',
     topics: [
       {
+        id: 'obryadovi-pisni', title: 'Обрядові та побутові пісні', author: 'Різновиди народних пісень',
+        icon: '🌻', minutes: 11, cover: ART + 'cover-folklore.webp',
+      },
+      {
         id: 'pisni-marusi-churay', title: 'Пісні Марусі Чурай', author: '«Віють вітри», «Засвіт встали козаченьки»',
-        icon: '🎶', minutes: 9, cover: ART + 'cover-folklore.webp',
+        icon: '🎶', minutes: 9,
       },
       {
         id: 'istorychni-pisni', title: 'Історичні пісні', author: '«Ой Морозе», «Чи не той то хміль»',
