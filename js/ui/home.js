@@ -1,22 +1,24 @@
-// Головний екран: денна ціль, вогники за тиждень, список тем.
+// Головний екран: план на сьогодні, вогники за тиждень, теми зі станом пам’яті.
 
 import * as store from '../store.js';
-import { SECTIONS } from '../../content/index.js';
+import { SECTIONS, loadAllTopics } from '../../content/index.js';
 import { ringSvg, plural, clamp, WEEKDAYS } from '../util.js';
 import { go } from '../app.js';
 
 export async function renderHome(root) {
+  const topics = await loadAllTopics();
+  const plan = store.dailyPlan(topics);
+  const byId = Object.fromEntries(plan.states.map(s => [s.topic.id, s]));
+
   const name = store.get('name');
   const goal = store.getNum('daily_goal_xp');
   const todayXp = store.dayStats().xp;
   const pct = clamp(todayXp / goal, 0, 1);
   const st = store.streak();
-  const due = store.dueCount();
-  const progress = store.allTopicProgress();
 
   root.innerHTML = `
-    <h1 class="page-title">${name ? `Привіт, ${name}!` : 'Привіт!'}</h1>
-    <p class="page-sub">${greeting(st, todayXp, goal)}</p>
+    <h1 class="page-title">${name ? `Привіт, ${name}!` : 'Сьогодні'}</h1>
+    <p class="page-sub">${greeting(plan, st)}</p>
 
     <div class="goal">
       <div class="goal__ring">
@@ -24,35 +26,30 @@ export async function renderHome(root) {
         <div class="goal__ring-num">${Math.round(pct * 100)}%</div>
       </div>
       <div>
-        <div class="goal__title">Ціль на сьогодні — ${goal} XP</div>
-        <div class="goal__sub">${todayXp} з ${goal} · залишилось ${Math.max(0, goal - todayXp)}</div>
+        <div class="goal__title">${plan.allDone ? 'План на сьогодні виконано' : 'План на сьогодні'}</div>
+        <div class="goal__sub">${todayXp} з ${goal} XP · 🔥 ${st} ${plural(st, 'день', 'дні', 'днів')}</div>
       </div>
     </div>
 
+    ${plan.allDone ? enoughHtml() : ''}
+
+    <div class="card plan">
+      ${plan.tasks.map(taskHtml).join('')}
+    </div>
+
+    ${plan.next ? `<button class="btn btn--primary" data-go="${plan.next.go}" style="margin-bottom:22px">
+      ${plan.next.key === 'review' ? 'Повторити' : plan.next.key === 'new' ? 'Почати тему' : 'Дотягнути ціль'}
+    </button>` : ''}
+
     <div class="card">
-      <div class="row" style="padding-top:0;border-bottom:0">
-        <div>
-          <div class="row__label">🔥 ${st} ${plural(st, 'день', 'дні', 'днів')} поспіль</div>
-          <div class="row__hint">${st === 0 ? 'Почни серію сьогодні' : 'Не загаси вогник!'}</div>
-        </div>
-      </div>
+      <div class="row__label">Тиждень</div>
       <div class="week">${weekHtml()}</div>
     </div>
 
-    ${due > 0 ? `
-      <button class="topic" data-go="practice" style="border-color:rgba(124,92,255,.45)">
-        <span class="topic__badge" style="background:linear-gradient(145deg,#7c5cff,#5a3fd6)">🎯</span>
-        <span class="topic__body">
-          <span class="topic__title">Час повторити</span>
-          <span class="topic__meta">${due} ${plural(due, 'питання', 'питання', 'питань')} чекає на тебе</span>
-        </span>
-        <span class="topic__chev">›</span>
-      </button>` : ''}
-
-    ${SECTIONS.map(s => sectionHtml(s, progress)).join('')}
+    ${SECTIONS.map(s => sectionHtml(s, byId)).join('')}
 
     <p class="page-sub" style="margin-top:26px;text-align:center">
-      Це поки що основа. Теми додаються файлами в <code>content/topics/</code>.
+      Тем у програмі більше — вони додаються поступово.
     </p>
   `;
 
@@ -64,10 +61,37 @@ export async function renderHome(root) {
   });
 }
 
-function greeting(streak, xp, goal) {
-  if (xp >= goal) return 'Ціль на сьогодні виконана. Можна ще — але вже без тиску 💛';
+function greeting(plan, streak) {
+  if (plan.allDone) return 'Усе заплановане зроблено.';
+  if (plan.next?.key === 'review') return 'Почнімо з повторення — щоб учорашнє не вивітрилось.';
   if (streak > 0) return 'Один урок — і вогник горить далі.';
   return 'Почнімо з чогось невеликого.';
+}
+
+/** Головне, про що просили: чесно сказати, що на сьогодні досить. */
+function enoughHtml() {
+  return `
+    <div class="enough">
+      <div class="enough__title">💛 На сьогодні досить</div>
+      <div class="enough__text">
+        Повторення зроблено, нову тему пройдено, ціль набрана.
+        Далі вчити можна, але вже без потреби — пам’ять краще працює,
+        коли між заходами є пауза.
+      </div>
+      <button class="btn btn--ghost" data-go="practice">Усе одно потренуватись</button>
+    </div>`;
+}
+
+function taskHtml(task) {
+  return `
+    <button class="plan__row ${task.done ? 'is-done' : ''}" data-go="${task.go}">
+      <span class="plan__check">${task.done ? '✓' : ''}</span>
+      <span class="plan__body">
+        <span class="plan__title">${task.title}</span>
+        <span class="plan__hint">${task.hint}</span>
+      </span>
+      ${task.done ? '' : '<span class="topic__chev">›</span>'}
+    </button>`;
 }
 
 function weekHtml() {
@@ -78,7 +102,7 @@ function weekHtml() {
     </div>`).join('');
 }
 
-function sectionHtml(section, progress) {
+function sectionHtml(section, byId) {
   const head = `
     <div class="section-h">
       <span class="section-h__title">${section.title}</span>
@@ -86,10 +110,9 @@ function sectionHtml(section, progress) {
     </div>`;
 
   if (!section.topics.length) return head + soonHtml(section);
-  return head + section.topics.map(t => topicHtml(t, progress[t.id])).join('');
+  return head + section.topics.map(t => topicHtml(t, byId[t.id])).join('');
 }
 
-/** Розділ, який ще не наповнили: показуємо обкладинку приглушено. */
 function soonHtml(section) {
   return `
     <div class="tile tile--soon">
@@ -102,26 +125,26 @@ function soonHtml(section) {
     </div>`;
 }
 
-function topicHtml(topic, p) {
-  const theory = p?.theory_done ? 0.5 : 0;
-  const quiz = (p?.best_score ?? 0) * 0.5;
-  const pct = Math.round((theory + quiz) * 100);
-  const done = !!p?.completed_at;
-
-  const meta = [topic.author];
-  meta.push(p?.best_score ? `найкраще ${Math.round(p.best_score * 100)}%` : `${topic.minutes} хв`);
+function topicHtml(topic, s) {
+  const label = store.STATE_LABELS[s?.state ?? 'new'];
+  const pct = Math.round((s?.mastery ?? 0) * 100);
 
   return `
-    <button class="tile ${done ? 'is-done' : ''} ${topic.cover ? '' : 'tile--plain'}" data-topic="${topic.id}">
+    <button class="tile ${s?.state === 'solid' ? 'is-done' : ''} ${topic.cover ? '' : 'tile--plain'}"
+            data-topic="${topic.id}">
       ${topic.cover
       ? `<img class="tile__cover" src="${topic.cover}" alt="" loading="lazy">`
       : `<span class="tile__glyph">${topic.icon}</span>`}
       <span class="tile__veil"></span>
       <span class="tile__body">
         <span class="tile__title">${topic.title}</span>
-        <span class="tile__meta">${meta.map(m => `<span>${m}</span>`).join('')}</span>
+        <span class="tile__meta">
+          <span>${topic.author}</span>
+          <span style="color:${label.color}">· ${label.text}</span>
+          ${s?.due ? `<span style="color:var(--accent-2)">· ${s.due} на повтор</span>` : ''}
+        </span>
       </span>
-      ${done ? '<span class="tile__done">✓</span>' : ''}
+      ${s?.state === 'solid' ? '<span class="tile__done">✓</span>' : ''}
       <span class="tile__bar"><i style="width:${pct}%"></i></span>
     </button>`;
 }

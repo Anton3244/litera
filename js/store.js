@@ -246,6 +246,109 @@ export function saveQuizResult(topicId, score) {
   );
 }
 
+/* ---------------- що вже вивчено ---------------- */
+
+/** Скільки днів інтервалу вважаємо «вивчено назубок». */
+const SOLID_INTERVAL = 14;
+
+/**
+ * Стан теми за пам’яттю, а не за фактом «пройшла тест».
+ * Рахується з графіка повторень: чим довший інтервал, тим міцніше сидить у голові.
+ */
+export function topicState(topicId, questionIds) {
+  const total = questionIds.length;
+  if (!total) return { state: 'new', mastery: 0, due: 0, seen: 0, total: 0 };
+
+  const marks = '?'.repeat(total).split('').join(',');
+  const rows = db.all(
+    `SELECT question_id, interval_days, reps, due_day FROM srs WHERE question_id IN (${marks})`,
+    questionIds
+  );
+
+  const t = today();
+  const due = rows.filter(r => r.due_day <= t).length;
+  const strength = rows.reduce((sum, r) => {
+    if (r.reps === 0) return sum;                       // остання відповідь була хибна
+    return sum + Math.min(r.interval_days / SOLID_INTERVAL, 1);
+  }, 0);
+  const mastery = strength / total;
+
+  let state;
+  if (!rows.length) state = 'new';
+  else if (due > 0 && mastery >= 0.5) state = 'review';  // знала, але час освіжити
+  else if (mastery >= 0.75) state = 'solid';
+  else if (mastery >= 0.3) state = 'learning';
+  else state = 'weak';
+
+  return { state, mastery, due, seen: rows.length, total };
+}
+
+export const STATE_LABELS = {
+  new: { text: 'не почато', color: 'var(--text-faint)' },
+  weak: { text: 'щойно почала', color: 'var(--err)' },
+  learning: { text: 'вивчається', color: 'var(--accent)' },
+  review: { text: 'час повторити', color: 'var(--accent-2)' },
+  solid: { text: 'вивчено', color: 'var(--ok)' },
+};
+
+/** Чи завершила якусь тему саме сьогодні. */
+export function topicsCompletedToday() {
+  return db.value(
+    'SELECT COUNT(*) FROM topic_progress WHERE completed_at IS NOT NULL AND substr(completed_at,1,10) = ?',
+    [new Date().toISOString().slice(0, 10)],
+    0
+  );
+}
+
+/**
+ * План на сьогодні: повторити вчорашнє → вивчити нове → добити денну ціль.
+ * @param {Array} topics усі теми з питаннями
+ */
+export function dailyPlan(topics) {
+  const goal = getNum('daily_goal_xp');
+  const xp = dayStats().xp;
+  const due = dueCount();
+
+  const states = topics.map(t => ({ topic: t, ...topicState(t.id, t.questions.map(q => q.id)) }));
+  const nextNew = states.find(s => s.state === 'new')?.topic
+    ?? states.find(s => s.state === 'weak')?.topic
+    ?? null;
+
+  const tasks = [
+    {
+      key: 'review',
+      title: 'Повторити вивчене',
+      hint: due ? `${due} питань чекає — щоб учора не забулося` : 'усе повторено',
+      done: due === 0,
+      skip: due === 0 && !states.some(s => s.seen > 0),
+      go: 'run/due',
+    },
+    {
+      key: 'new',
+      title: nextNew ? `Нова тема: ${nextNew.title}` : 'Усі теми пройдено',
+      hint: nextNew ? `${nextNew.author} · ${nextNew.minutes} хв` : 'лишилось тільки тримати в пам’яті',
+      done: !nextNew || topicsCompletedToday() > 0,
+      skip: !nextNew,
+      go: nextNew ? `topic/${nextNew.id}` : 'practice',
+    },
+    {
+      key: 'goal',
+      title: `Денна ціль — ${goal} XP`,
+      hint: xp >= goal ? 'виконано' : `${xp} з ${goal}`,
+      done: xp >= goal,
+      skip: false,
+      go: 'run/mix',
+    },
+  ].filter(t => !t.skip);
+
+  return {
+    tasks,
+    states,
+    allDone: tasks.every(t => t.done),
+    next: tasks.find(t => !t.done) ?? null,
+  };
+}
+
 /* ---------------- досягнення ---------------- */
 
 const AWARD_ART = 'assets/art/award-';
