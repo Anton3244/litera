@@ -1,0 +1,136 @@
+// Service worker: офлайн-режим і щоденне нагадування.
+// Піднімай CACHE_VERSION після зміни файлів — інакше браузер віддасть старі.
+
+const CACHE_VERSION = 'litera-v1';
+const SHELL = [
+  './',
+  'index.html',
+  'css/style.css',
+  'manifest.webmanifest',
+  'assets/icon.svg',
+  'assets/icon-192.png',
+  'js/app.js',
+  'js/db.js',
+  'js/store.js',
+  'js/util.js',
+  'js/notify.js',
+  'js/ui/home.js',
+  'js/ui/lesson.js',
+  'js/ui/quiz.js',
+  'js/ui/quiz-engine.js',
+  'js/ui/practice.js',
+  'js/ui/stats.js',
+  'js/ui/settings.js',
+  'content/index.js',
+];
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_VERSION)
+      .then(cache => cache.addAll(SHELL))
+      .then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE_VERSION).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', event => {
+  const { request } = event;
+  if (request.method !== 'GET') return;
+
+  const url = new URL(request.url);
+  const sameOrigin = url.origin === self.location.origin;
+  const isSqlJs = url.hostname === 'cdnjs.cloudflare.com';
+  if (!sameOrigin && !isSqlJs) return;
+
+  // sql.js майже не змінюється — беремо з кешу одразу.
+  if (isSqlJs) {
+    event.respondWith(
+      caches.match(request).then(hit => hit || fetch(request).then(res => {
+        const copy = res.clone();
+        caches.open(CACHE_VERSION).then(c => c.put(request, copy));
+        return res;
+      }))
+    );
+    return;
+  }
+
+  // Свої файли: віддаємо з кешу, паралельно оновлюємо.
+  event.respondWith(
+    caches.match(request).then(hit => {
+      const network = fetch(request).then(res => {
+        if (res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE_VERSION).then(c => c.put(request, copy));
+        }
+        return res;
+      }).catch(() => hit);
+      return hit || network;
+    })
+  );
+});
+
+/* ---------------- нагадування ---------------- */
+
+const IDB_NAME = 'litera';
+const IDB_STORE = 'kv';
+const MIRROR_KEY = 'reminder';
+
+function readMirror() {
+  return new Promise(resolve => {
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = () => req.result.createObjectStore(IDB_STORE);
+    req.onerror = () => resolve(null);
+    req.onsuccess = () => {
+      try {
+        const get = req.result.transaction(IDB_STORE, 'readonly').objectStore(IDB_STORE).get(MIRROR_KEY);
+        get.onsuccess = () => resolve(get.result || null);
+        get.onerror = () => resolve(null);
+      } catch {
+        resolve(null);
+      }
+    };
+  });
+}
+
+function localDayKey() {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 10);
+}
+
+self.addEventListener('periodicsync', event => {
+  if (event.tag !== 'study-reminder') return;
+  event.waitUntil((async () => {
+    const state = await readMirror();
+    if (!state?.enabled) return;
+    if (state.lastStudyDay === localDayKey()) return;
+
+    const [h, m] = String(state.time || '18:30').split(':').map(Number);
+    const now = new Date();
+    if (now.getHours() * 60 + now.getMinutes() < (h || 0) * 60 + (m || 0)) return;
+
+    await self.registration.showNotification('Час української літератури', {
+      body: state.name ? `${state.name}, сьогодні ще не було заняття 🔥` : 'Сьогодні ще не було заняття 🔥',
+      icon: 'assets/icon-192.png',
+      badge: 'assets/icon-192.png',
+      tag: 'daily-study',
+    });
+  })());
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  event.waitUntil((async () => {
+    const all = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    const existing = all.find(c => c.url.startsWith(self.registration.scope));
+    if (existing) return existing.focus();
+    return self.clients.openWindow(self.registration.scope);
+  })());
+});
