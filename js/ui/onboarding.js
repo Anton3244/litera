@@ -3,6 +3,7 @@
 
 import * as store from '../store.js';
 import { enableReminders } from '../notify.js';
+import * as sync from '../sync.js';
 import { $ } from '../util.js';
 
 export const needsOnboarding = () => store.get('onboarded') !== '1';
@@ -15,7 +16,12 @@ const GOALS = [
 
 export function renderOnboarding(root, onDone) {
   let step = 0;
-  const steps = [welcome, name, goal, reminder, ready];
+  const steps = [welcome, account, name, goal, reminder, ready];
+
+  function finish() {
+    store.set('onboarded', '1');
+    onDone();
+  }
 
   function draw() {
     root.innerHTML = `<div class="ob">${steps[step]()}</div>`;
@@ -25,11 +31,7 @@ export function renderOnboarding(root, onDone) {
 
   function next() {
     step++;
-    if (step >= steps.length) {
-      store.set('onboarded', '1');
-      onDone();
-      return;
-    }
+    if (step >= steps.length) { finish(); return; }
     draw();
   }
 
@@ -50,6 +52,69 @@ export function renderOnboarding(root, onDone) {
       </p>
       <button class="btn btn--primary" data-next>Добре</button>`;
   }
+
+  /** Вхід замість реєстрації: код — це і є обліковий запис, тільки без пароля. */
+  function account() {
+    return `
+      <div class="ob__art">🔑</div>
+      <h1 class="ob__title">Ти тут уперше?</h1>
+      <p class="ob__text">
+        Якщо ти вже займалась на іншому пристрої, введи свій код —
+        і весь прогрес переїде сюди. Якщо ні, просто рушай далі.
+      </p>
+      <div class="ob__choices">
+        <button class="ob__choice" id="ob-first"><span class="ob__choice-t">Я тут уперше</span>
+          <span class="ob__choice-h">почати з чистого аркуша</span></button>
+        <button class="ob__choice" id="ob-has"><span class="ob__choice-t">У мене вже є код</span>
+          <span class="ob__choice-h">перенести прогрес з іншого пристрою</span></button>
+      </div>
+      <div id="ob-login" hidden>
+        ${sync.serverUrl() ? '' : `<input class="ob__input" id="ob-url" type="text"
+           placeholder="Адреса сервера" value="${sync.serverUrl()}">`}
+        <input class="ob__input" id="ob-code" type="text" placeholder="Код" maxlength="32"
+               style="letter-spacing:.16em;text-transform:uppercase">
+        <button class="btn btn--primary" id="ob-enter">Увійти</button>
+        <div class="ob__text" id="ob-status" style="text-align:center;margin:10px 0 0"></div>
+      </div>`;
+  }
+  account.bind = root => {
+    const box = root.querySelector('#ob-login');
+    root.querySelector('#ob-first').addEventListener('click', next);
+    root.querySelector('#ob-has').addEventListener('click', () => {
+      box.hidden = false;
+      root.querySelector('#ob-code').focus();
+    });
+
+    root.querySelector('#ob-enter').addEventListener('click', async e => {
+      const status = root.querySelector('#ob-status');
+      const url = root.querySelector('#ob-url')?.value.trim();
+      const code = root.querySelector('#ob-code').value.trim().toUpperCase();
+      if (!code) { status.textContent = 'Введи код'; return; }
+      if (url) store.set('sync_url', url);
+      if (!sync.serverUrl()) {
+        status.textContent = 'Спершу введи адресу сервера — вона є в налаштуваннях на першому пристрої.';
+        return;
+      }
+
+      e.currentTarget.disabled = true;
+      status.textContent = 'Шукаю твій прогрес…';
+      store.set('sync_code', code);
+
+      try {
+        const { hadRemote } = await sync.syncNow();
+        if (!hadRemote) {
+          status.textContent = 'За цим кодом нічого немає — перевір, чи не помилилась.';
+          e.currentTarget.disabled = false;
+          return;
+        }
+        status.textContent = 'Знайшла! Переношу…';
+        finish();
+      } catch (err) {
+        status.textContent = 'Не вийшло: ' + err.message;
+        e.currentTarget.disabled = false;
+      }
+    });
+  };
 
   function name() {
     return `
@@ -115,6 +180,7 @@ export function renderOnboarding(root, onDone) {
 
   function ready() {
     const who = store.get('name');
+    if (!store.get('sync_code')) store.set('sync_code', sync.makeCode(8));
     return `
       <div class="ob__art">🔥</div>
       <h1 class="ob__title">${who ? `Готово, ${who}!` : 'Готово!'}</h1>

@@ -8,11 +8,12 @@
 import * as db from './db.js';
 import * as store from './store.js';
 import { nowIso } from './util.js';
+import { SYNC_URL } from './config.js';
 
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // без схожих 0/O, 1/I
 
 export function serverUrl() {
-  return (store.get('sync_url') || '').replace(/\/+$/, '');
+  return (store.get('sync_url') || SYNC_URL || '').replace(/\/+$/, '');
 }
 
 export const syncCode = () => store.get('sync_code') || '';
@@ -146,6 +147,20 @@ async function request(method, body) {
   if (method === 'GET' && res.status === 404) return null;   // на сервері ще порожньо
   if (!res.ok) throw new Error(`Сервер відповів ${res.status}`);
   return method === 'GET' ? res.json() : res.json();
+}
+
+/**
+ * Тиха синхронізація при запуску: якщо налаштовано — підтягуємо зміни
+ * з іншого пристрою, не турбуючи нічим на екрані.
+ */
+export async function autoSync() {
+  if (!isConfigured()) return null;
+  try {
+    return await syncNow();
+  } catch (err) {
+    console.warn('Синхронізація не вдалася:', err.message);
+    return null;
+  }
 }
 
 /** Забирає чуже, зливає зі своїм і відправляє об’єднане назад. */

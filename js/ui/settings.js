@@ -74,11 +74,17 @@ export async function renderSettings(root) {
         <input id="s-sync-url" type="text" value="${escapeAttr(store.get('sync_url'))}" placeholder="https://…"
           style="width:150px;background:var(--bg-elev-2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 11px;font:inherit;font-size:13px">
       </div>
-      <div class="row">
-        <div><div class="row__label">Код</div>
-        <div class="row__hint">Однаковий на всіх пристроях. Нікому не показуй.</div></div>
-        <input id="s-sync-code" type="text" value="${escapeAttr(store.get('sync_code'))}" placeholder="——"
-          style="width:110px;background:var(--bg-elev-2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 11px;font:inherit;font-size:14px;letter-spacing:.1em;text-transform:uppercase">
+      <div class="row" style="display:block">
+        <div class="row__label" style="margin-bottom:6px">Твій код</div>
+        <div class="row__hint" style="margin-bottom:10px">
+          Введи його на другому пристрої — і прогрес буде спільний.
+          Це замість логіна з паролем: нема чого забувати й нема чого красти.
+          Але й нікому не показуй.
+        </div>
+        <div class="codebox">
+          <input id="s-sync-code" type="text" value="${escapeAttr(store.get('sync_code'))}" placeholder="——">
+          <button class="btn btn--ghost" id="s-sync-copy">Копіювати</button>
+        </div>
       </div>
       <div class="row">
         <div><div class="row__label" id="s-sync-state">${store.get('sync_last') ? 'Востаннє: ' + new Date(store.get('sync_last')).toLocaleString('uk') : 'Ще не синхронізовано'}</div>
@@ -176,6 +182,18 @@ export async function renderSettings(root) {
     store.set('sync_url', e.target.value.trim()));
   root.querySelector('#s-sync-code').addEventListener('change', e =>
     store.set('sync_code', e.target.value.trim().toUpperCase()));
+
+  root.querySelector('#s-sync-copy').addEventListener('click', async () => {
+    const code = root.querySelector('#s-sync-code').value.trim();
+    if (!code) return;
+    try {
+      await navigator.clipboard.writeText(code);
+      toast('Код скопійовано');
+    } catch {
+      root.querySelector('#s-sync-code').select();
+      toast('Виділено — скопіюй вручну');
+    }
+  });
 
   root.querySelector('#s-sync-new').addEventListener('click', () => {
     const code = sync.makeCode(8);

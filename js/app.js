@@ -11,6 +11,7 @@ import { renderStats } from './ui/stats.js';
 import { renderSettings } from './ui/settings.js';
 import { initReminders } from './notify.js';
 import { needsOnboarding, renderOnboarding } from './ui/onboarding.js';
+import { autoSync } from './sync.js';
 
 let viewEl = $('#view');
 const topbar = $('#topbar');
@@ -136,6 +137,9 @@ async function boot() {
     await route();
     initReminders();
     registerServiceWorker();
+
+    // Догнати інший пристрій — тихо, у фоні. Якщо щось приїхало, оновлюємо екран.
+    autoSync().then(res => { if (res?.added) route(); });
 
     bootEl.remove();
     topbar.hidden = false;

@@ -149,6 +149,15 @@ p:last-child{margin-bottom:0}
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
 
+.codebox{display:flex;gap:8px;align-items:center}
+.codebox input{
+  flex:1;min-width:0;background:var(--bg-elev-2);border:1px solid var(--line);
+  color:var(--text);border-radius:var(--r-sm);padding:12px 14px;
+  font:inherit;font-size:19px;font-weight:800;letter-spacing:.18em;
+  text-transform:uppercase;text-align:center;
+}
+.codebox .btn{width:auto;flex:none;padding:12px 16px;font-size:14px}
+
 .accents{display:flex;gap:8px;flex:none}
 .accent{width:26px;height:26px;border-radius:50%;border:2px solid transparent}
 .accent.is-on{border-color:var(--text)}
