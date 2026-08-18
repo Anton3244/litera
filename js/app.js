@@ -10,6 +10,7 @@ import { renderPractice, renderPracticeRun } from './ui/practice.js';
 import { renderStats } from './ui/stats.js';
 import { renderSettings } from './ui/settings.js';
 import { initReminders } from './notify.js';
+import { needsOnboarding, renderOnboarding } from './ui/onboarding.js';
 
 let viewEl = $('#view');
 const topbar = $('#topbar');
@@ -119,6 +120,16 @@ async function boot() {
 
     document.addEventListener('click', onGlobalClick);
     window.addEventListener('hashchange', route);
+
+    if (needsOnboarding()) {
+      bootEl.remove();
+      viewEl.hidden = false;
+      viewEl.classList.add('view--full');
+      await new Promise(resolve => renderOnboarding(viewEl, resolve));
+      viewEl.classList.remove('view--full');
+      topbar.hidden = false;
+      location.hash = '#/home';
+    }
 
     await route();
     initReminders();

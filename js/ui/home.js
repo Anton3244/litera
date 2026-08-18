@@ -1,9 +1,11 @@
-// Головний екран: план на сьогодні, вогники за тиждень, теми зі станом пам’яті.
+// Головний екран. Головне правило: видно один наступний крок,
+// а не двадцять дві теми одразу.
 
 import * as store from '../store.js';
 import { SECTIONS, loadAllTopics } from '../../content/index.js';
 import { ringSvg, plural, clamp, WEEKDAYS } from '../util.js';
 import { go } from '../app.js';
+import { maybeShowHint } from './onboarding.js';
 
 export async function renderHome(root) {
   const topics = await loadAllTopics();
@@ -13,62 +15,77 @@ export async function renderHome(root) {
   const name = store.get('name');
   const goal = store.getNum('daily_goal_xp');
   const todayXp = store.dayStats().xp;
-  const pct = clamp(todayXp / goal, 0, 1);
   const st = store.streak();
+  const doneCount = plan.tasks.filter(t => t.done).length;
 
   root.innerHTML = `
-    <h1 class="page-title">${name ? `Привіт, ${name}!` : 'Сьогодні'}</h1>
-    <p class="page-sub">${greeting(plan, st)}</p>
-
-    <div class="goal">
-      <div class="goal__ring">
-        ${ringSvg(pct)}
-        <div class="goal__ring-num">${Math.round(pct * 100)}%</div>
-      </div>
+    <div class="hello">
       <div>
-        <div class="goal__title">${plan.allDone ? 'План на сьогодні виконано' : 'План на сьогодні'}</div>
-        <div class="goal__sub">${todayXp} з ${goal} XP · 🔥 ${st} ${plural(st, 'день', 'дні', 'днів')}</div>
+        <div class="hello__hi">${name ? `Привіт, ${name}` : 'Сьогодні'}</div>
+        <div class="hello__sub">${todayXp} з ${goal} XP · 🔥 ${st} ${plural(st, 'день', 'дні', 'днів')}</div>
+      </div>
+      <div class="hello__ring">
+        ${ringSvg(clamp(todayXp / goal, 0, 1), 46, 5)}
       </div>
     </div>
 
-    ${plan.allDone ? enoughHtml() : ''}
+    ${plan.allDone ? enoughHtml() : stepHtml(plan, doneCount)}
 
-    <div class="card plan">
-      ${plan.tasks.map(taskHtml).join('')}
-    </div>
-
-    ${plan.next ? `<button class="btn btn--primary" data-go="${plan.next.go}" style="margin-bottom:22px">
-      ${plan.next.key === 'review' ? 'Повторити' : plan.next.key === 'new' ? 'Почати тему' : 'Дотягнути ціль'}
-    </button>` : ''}
+    <div class="card plan">${plan.tasks.map(taskHtml).join('')}</div>
 
     <div class="card">
       <div class="row__label">Тиждень</div>
       <div class="week">${weekHtml()}</div>
     </div>
 
-    ${SECTIONS.map(s => sectionHtml(s, byId)).join('')}
+    ${upNextHtml(plan, byId)}
 
-    <p class="page-sub" style="margin-top:26px;text-align:center">
-      Тем у програмі більше — вони додаються поступово.
-    </p>
+    <button class="btn btn--ghost" id="show-all">Усі теми (${topics.length})</button>
+    <div id="all-topics" hidden>
+      ${SECTIONS.map(s => sectionHtml(s, byId)).join('')}
+    </div>
   `;
 
   root.addEventListener('click', e => {
     const topic = e.target.closest('[data-topic]');
     if (topic) { go('topic/' + topic.dataset.topic); return; }
     const nav = e.target.closest('[data-go]');
-    if (nav) go(nav.dataset.go);
+    if (nav) { go(nav.dataset.go); return; }
+    if (e.target.closest('#show-all')) {
+      const box = root.querySelector('#all-topics');
+      box.hidden = !box.hidden;
+      root.querySelector('#show-all').textContent =
+        box.hidden ? `Усі теми (${topics.length})` : 'Згорнути';
+    }
   });
+
+  maybeShowHint();
 }
 
-function greeting(plan, streak) {
-  if (plan.allDone) return 'Усе заплановане зроблено.';
-  if (plan.next?.key === 'review') return 'Почнімо з повторення — щоб учорашнє не вивітрилось.';
-  if (streak > 0) return 'Один урок — і вогник горить далі.';
-  return 'Почнімо з чогось невеликого.';
+/** Один наступний крок — найпомітніший елемент екрана. */
+function stepHtml(plan, doneCount) {
+  const task = plan.next;
+  const total = plan.tasks.length;
+  const verb = task.key === 'review' ? 'Повторити'
+    : task.key === 'new' ? 'Почати тему'
+      : 'Потренуватись';
+
+  return `
+    <div class="step">
+      <div class="step__badge">Крок ${doneCount + 1} з ${total} на сьогодні</div>
+      <div class="step__title">${task.title}</div>
+      <div class="step__hint">${task.hint}</div>
+      <button class="btn btn--primary" data-go="${task.go}">${verb}</button>
+      <div class="step__why">${why(task.key)}</div>
+    </div>`;
 }
 
-/** Головне, про що просили: чесно сказати, що на сьогодні досить. */
+function why(key) {
+  if (key === 'review') return 'Повторення йде першим: учорашнє забувається швидше, ніж засвоюється нове.';
+  if (key === 'new') return 'Спершу теорія по слайдах, потім тест у форматі НМТ. Разом хвилин десять.';
+  return 'Кілька питань зі змішаних тем — щоб добити денну ціль.';
+}
+
 function enoughHtml() {
   return `
     <div class="enough">
@@ -94,6 +111,22 @@ function taskHtml(task) {
     </button>`;
 }
 
+/** Три найближчі теми — щоб було видно, куди рухаємось, без повного списку. */
+function upNextHtml(plan, byId) {
+  const queue = plan.states
+    .filter(s => s.state !== 'solid')
+    .slice(0, 3)
+    .map(s => s.topic);
+  if (!queue.length) return '';
+
+  return `
+    <div class="section-h">
+      <span class="section-h__title">Далі за планом</span>
+      <span class="section-h__line"></span>
+    </div>
+    ${queue.map(t => topicHtml(t, byId[t.id])).join('')}`;
+}
+
 function weekHtml() {
   return store.weekFlames().map((d, i) => `
     <div class="day ${d.lit ? 'is-lit' : ''} ${d.isToday ? 'is-today' : ''}">
@@ -108,7 +141,6 @@ function sectionHtml(section, byId) {
       <span class="section-h__title">${section.title}</span>
       <span class="section-h__line"></span>
     </div>`;
-
   if (!section.topics.length) return head + soonHtml(section);
   return head + section.topics.map(t => topicHtml(t, byId[t.id])).join('');
 }

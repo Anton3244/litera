@@ -1,7 +1,7 @@
 // Service worker: офлайн-режим і щоденне нагадування.
 // Піднімай CACHE_VERSION після зміни файлів — інакше браузер віддасть старі.
 
-const CACHE_VERSION = 'litera-v9';
+const CACHE_VERSION = 'litera-v10';
 
 const ART = [
   'cover-slovo-o-polku', 'cover-shevchenko-kateryna', 'cover-rody-i-zhanry',
@@ -32,6 +32,7 @@ const SHELL = [
   'js/ui/practice.js',
   'js/ui/stats.js',
   'js/ui/settings.js',
+  'js/ui/onboarding.js',
   'content/index.js',
   'content/videos.js',
   ...[
