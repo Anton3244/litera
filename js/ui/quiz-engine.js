@@ -5,7 +5,6 @@ import * as store from '../store.js';
 import { LETTERS, shuffle, vibrate, escapeHtml } from '../util.js';
 import { bumpStat, refreshStats, setHearts } from '../app.js';
 
-const HEARTS_PER_RUN = 5;
 
 /**
  * @param {HTMLElement} root куди малювати
@@ -17,7 +16,7 @@ const HEARTS_PER_RUN = 5;
  */
 export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, onFinish }) {
   let index = 0;
-  let hearts = HEARTS_PER_RUN;
+  let hearts = store.heartsPerRun();   // росте з рівнем
   let startedAt = performance.now();
   const results = [];
 

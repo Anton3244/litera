@@ -4,7 +4,14 @@ import * as store from '../store.js';
 import * as db from '../db.js';
 import { enableReminders, disableReminders, syncMirror } from '../notify.js';
 import { toast, dayKey } from '../util.js';
-import { refreshStats } from '../app.js';
+import { refreshStats, applyAccent } from '../app.js';
+
+const ACCENTS = [
+  { name: 'Бурштин', value: '#ffb43d' },
+  { name: 'Фіалка', value: '#a78bfa' },
+  { name: 'М’ята', value: '#3ddc97' },
+  { name: 'Захід', value: '#ff7a6b' },
+];
 
 export async function renderSettings(root) {
   root.innerHTML = `
@@ -24,8 +31,21 @@ export async function renderSettings(root) {
         </select>
       </div>
       <div class="row">
-        <div><div class="row__label">Життя в тестах</div><div class="row__hint">5 помилок — і тест починається спочатку</div></div>
+        <div><div class="row__label">Життя в тестах</div>
+        <div class="row__hint">${store.heartsPerRun()} помилок — і тест починається спочатку</div></div>
         <button class="switch ${store.getBool('hearts_on') ? 'is-on' : ''}" id="s-hearts" aria-label="Життя"></button>
+      </div>
+      <div class="row">
+        <div>
+          <div class="row__label">Колір застосунку</div>
+          <div class="row__hint">${store.canPickAccent()
+      ? 'Привілей рівня «Літератор»'
+      : `Відкриється на рівні «Літератор» — ${store.LEVELS[3].xp} XP`}</div>
+        </div>
+        <div class="accents ${store.canPickAccent() ? '' : 'is-locked'}">
+          ${ACCENTS.map(a => `<button class="accent ${store.get('accent') === a.value ? 'is-on' : ''}"
+            style="background:${a.value}" data-accent="${a.value}" title="${a.name}"></button>`).join('')}
+        </div>
       </div>
     </div>
 
@@ -47,6 +67,11 @@ export async function renderSettings(root) {
 
     <div class="section-h"><span class="section-h__title">Дані</span><span class="section-h__line"></span></div>
     <div class="card">
+      <div class="row">
+        <div><div class="row__label">Показати знайомство ще раз</div>
+        <div class="row__hint">Прогрес залишиться на місці</div></div>
+        <button class="btn btn--ghost" id="s-tour" style="width:auto;padding:9px 14px;font-size:14px">Показати</button>
+      </div>
       <div class="row">
         <div><div class="row__label">Резервна копія</div><div class="row__hint">Файл .sqlite з усім прогресом</div></div>
         <button class="btn btn--ghost" id="s-export" style="width:auto;padding:9px 14px;font-size:14px">Зберегти</button>
@@ -105,6 +130,24 @@ export async function renderSettings(root) {
     store.set('reminder_time', e.target.value);
     syncMirror();
     toast('Час оновлено');
+  });
+
+  root.querySelector('.accents').addEventListener('click', e => {
+    const btn = e.target.closest('[data-accent]');
+    if (!btn) return;
+    if (!store.canPickAccent()) {
+      toast(`Відкриється на рівні «Літератор» — ${store.LEVELS[3].xp} XP`, 3000);
+      return;
+    }
+    store.set('accent', btn.dataset.accent);
+    applyAccent();
+    for (const b of root.querySelectorAll('[data-accent]')) b.classList.toggle('is-on', b === btn);
+  });
+
+  root.querySelector('#s-tour').addEventListener('click', () => {
+    store.set('onboarded', '0');
+    location.hash = '#/home';
+    location.reload();
   });
 
   root.querySelector('#s-export').addEventListener('click', () => {

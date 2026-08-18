@@ -25,6 +25,8 @@ export async function renderStats(root) {
     <h1 class="page-title">Прогрес</h1>
     <p class="page-sub">Усе, що ти вже зробила — тут.</p>
 
+    ${levelsHtml()}
+
     <div class="result__grid" style="margin-bottom:16px">
       <div class="result__cell"><b style="color:var(--accent)">${st}</b><span>${plural(st, 'день', 'дні', 'днів')} поспіль</span></div>
       <div class="result__cell"><b>${store.totalXp()}</b><span>усього XP</span></div>
@@ -72,6 +74,32 @@ export async function renderStats(root) {
     </p>
     ${states.map(topicRow).join('')}
   `;
+}
+
+/** Драбинка рівнів: що вже відкрито і що дає наступний. */
+function levelsHtml() {
+  const lvl = store.levelInfo();
+  return `
+    <div class="card">
+      <div class="row__label" style="margin-bottom:4px">
+        ${lvl.icon} Рівень ${lvl.number} — ${lvl.title}
+      </div>
+      <div class="row__hint" style="margin-bottom:10px">
+        ${lvl.next ? `${lvl.xp} XP · до «${lvl.next.title}» лишилось ${lvl.toNext}` : `${lvl.xp} XP · вище нікуди`}
+      </div>
+      <div class="lvl__bar" style="margin-bottom:14px"><i style="width:${Math.round(lvl.progress * 100)}%"></i></div>
+      ${store.LEVELS.map((l, i) => {
+    const open = i <= lvl.index;
+    if (!l.perk) return '';
+    return `<div class="perk ${open ? 'is-open' : ''}">
+          <span class="perk__icon">${open ? l.icon : '🔒'}</span>
+          <span class="perk__body">
+            <span class="perk__title">${l.perk}</span>
+            <span class="perk__hint">Рівень ${i + 1} · ${l.title} · ${l.xp} XP</span>
+          </span>
+        </div>`;
+  }).join('')}
+    </div>`;
 }
 
 function topicRow(s) {

@@ -18,17 +18,22 @@ export async function renderHome(root) {
   const st = store.streak();
   const doneCount = plan.tasks.filter(t => t.done).length;
 
+  const lvl = store.levelInfo();
+  const fresh = store.popLevelUp();
+
   root.innerHTML = `
     <div class="hello">
       <div>
-        <div class="hello__hi">${name ? `Привіт, ${name}` : 'Сьогодні'}</div>
-        <div class="hello__sub">${todayXp} з ${goal} XP · 🔥 ${st} ${plural(st, 'день', 'дні', 'днів')}</div>
+        <div class="hello__hi ${store.hasGoldFrame() ? 'is-gold' : ''}">${name ? `Привіт, ${name}` : 'Сьогодні'}</div>
+        <div class="hello__sub">${todayXp} з ${goal} XP · 🔥 ${st} ${plural(st, 'день', 'дні', 'днів')}${store.freezeUsed() ? ' · ❄️' : ''}</div>
       </div>
       <div class="hello__ring">
         ${ringSvg(clamp(todayXp / goal, 0, 1), 46, 5)}
       </div>
     </div>
 
+    ${fresh ? levelUpHtml(fresh, lvl) : ''}
+    ${levelHtml(lvl)}
     ${plan.allDone ? enoughHtml() : stepHtml(plan, doneCount)}
 
     <div class="card plan">${plan.tasks.map(taskHtml).join('')}</div>
@@ -60,6 +65,30 @@ export async function renderHome(root) {
   });
 
   maybeShowHint();
+}
+
+function levelHtml(lvl) {
+  return `
+    <button class="lvl" data-go="stats">
+      <span class="lvl__icon">${lvl.icon}</span>
+      <span class="lvl__body">
+        <span class="lvl__top">
+          <b>Рівень ${lvl.number} · ${lvl.title}</b>
+          <span>${lvl.next ? `до «${lvl.next.title}» ${lvl.toNext} XP` : 'максимум'}</span>
+        </span>
+        <span class="lvl__bar"><i style="width:${Math.round(lvl.progress * 100)}%"></i></span>
+      </span>
+    </button>`;
+}
+
+function levelUpHtml(fresh, lvl) {
+  return `
+    <div class="lvlup">
+      <div class="lvlup__icon">${fresh.icon}</div>
+      <div class="lvlup__title">Новий рівень: ${fresh.title}</div>
+      ${fresh.perk ? `<div class="lvlup__perk">Відкрито: ${fresh.perk}</div>` : ''}
+      <div class="lvlup__hint">Усі привілеї — у розділі «Прогрес»</div>
+    </div>`;
 }
 
 /** Один наступний крок — найпомітніший елемент екрана. */

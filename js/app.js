@@ -114,6 +114,8 @@ async function boot() {
   try {
     await initDb();
 
+    applyAccent();
+
     if (!store.get('first_seen_at')) {
       store.set('first_seen_at', new Date().toISOString());
     }
@@ -142,6 +144,16 @@ async function boot() {
     console.error(err);
     bootEl.classList.add('boot--error');
     $('.boot__text', bootEl).textContent = err.message || 'Щось пішло не так.';
+  }
+}
+
+/** Колір застосунку — привілей рівня «Літератор». */
+export function applyAccent() {
+  const accent = store.get('accent');
+  if (accent && store.canPickAccent()) {
+    document.documentElement.style.setProperty('--accent', accent);
+  } else {
+    document.documentElement.style.removeProperty('--accent');
   }
 }
 

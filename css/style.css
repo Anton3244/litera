@@ -111,6 +111,49 @@ p:last-child{margin-bottom:0}
 .goal__title{font-weight:700;font-size:15px}
 .goal__sub{color:var(--text-dim);font-size:13px}
 
+/* ---------- рівні та привілеї ---------- */
+.lvl{
+  display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:12px 14px;margin-bottom:14px;
+}
+.lvl__icon{font-size:24px;flex:none}
+.lvl__body{flex:1;min-width:0}
+.lvl__top{display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:6px}
+.lvl__top b{font-weight:800}
+.lvl__top span{color:var(--text-faint);flex:none}
+.lvl__bar{display:block;height:6px;border-radius:3px;background:var(--bg-elev-2);overflow:hidden}
+.lvl__bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#ff8f3d);transition:width .5s ease}
+
+.lvlup{
+  background:linear-gradient(135deg,#3a2a12,#2a1f3d);
+  border:1px solid var(--accent);border-radius:var(--r-lg);
+  padding:18px;margin-bottom:16px;text-align:center;
+  animation:pop .5s cubic-bezier(.2,1.4,.4,1);
+}
+.lvlup__icon{font-size:44px;line-height:1;margin-bottom:8px}
+.lvlup__title{font-size:19px;font-weight:800;margin-bottom:6px}
+.lvlup__perk{color:var(--accent);font-weight:700;font-size:14.5px;margin-bottom:6px}
+.lvlup__hint{color:var(--text-faint);font-size:12.5px}
+
+.perk{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);opacity:.45}
+.perk:last-child{border-bottom:0}
+.perk.is-open{opacity:1}
+.perk__icon{font-size:20px;flex:none;width:26px;text-align:center}
+.perk__body{flex:1;min-width:0}
+.perk__title{display:block;font-size:14px;font-weight:600;line-height:1.35}
+.perk__hint{display:block;color:var(--text-faint);font-size:12px;margin-top:2px}
+
+.hello__hi.is-gold{
+  background:linear-gradient(92deg,#ffd76a,#ff9b3d,#ffd76a);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+
+.accents{display:flex;gap:8px;flex:none}
+.accent{width:26px;height:26px;border-radius:50%;border:2px solid transparent}
+.accent.is-on{border-color:var(--text)}
+.accents.is-locked{opacity:.35}
+
 /* ---------- знайомство ---------- */
 .ob{max-width:460px;margin:0 auto;padding:32px 4px 40px;text-align:center;animation:slideIn .3s ease}
 .ob__art{font-size:64px;line-height:1;margin-bottom:18px}

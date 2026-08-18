@@ -46,6 +46,60 @@ export function set(key, value) {
     [key, String(value)]);
 }
 
+/* ---------------- рівні та привілеї ---------------- */
+
+export const LEVELS = [
+  { xp: 0, title: 'Початківець', icon: '🌱', perk: null },
+  { xp: 150, title: 'Читач', icon: '📖', perk: 'Шосте життя в тестах' },
+  { xp: 400, title: 'Знавець', icon: '🔎', perk: 'Заморозка вогника: один пропущений день не гасить серію' },
+  { xp: 800, title: 'Літератор', icon: '✒️', perk: 'Вибір кольору застосунку' },
+  { xp: 1500, title: 'Критик', icon: '🎓', perk: 'Сьоме життя в тестах' },
+  { xp: 2500, title: 'Кобзар', icon: '🪕', perk: 'Золота рамка навколо імені' },
+  { xp: 4000, title: 'Класик', icon: '👑', perk: 'Найвищий рівень — усе відкрито' },
+];
+
+export function levelIndex(xp = totalXp()) {
+  let i = 0;
+  while (i + 1 < LEVELS.length && xp >= LEVELS[i + 1].xp) i++;
+  return i;
+}
+
+export function levelInfo(xp = totalXp()) {
+  const i = levelIndex(xp);
+  const cur = LEVELS[i];
+  const next = LEVELS[i + 1] ?? null;
+  const from = cur.xp;
+  const to = next?.xp ?? cur.xp;
+  return {
+    index: i,
+    number: i + 1,
+    ...cur,
+    next,
+    xp,
+    toNext: next ? next.xp - xp : 0,
+    progress: next ? clamp((xp - from) / (to - from), 0, 1) : 1,
+  };
+}
+
+/** Скільки життів у тесті — росте з рівнем. */
+export function heartsPerRun() {
+  const i = levelIndex();
+  return 5 + (i >= 1 ? 1 : 0) + (i >= 4 ? 1 : 0);
+}
+
+export const hasFreeze = () => levelIndex() >= 2;
+export const canPickAccent = () => levelIndex() >= 3;
+export const hasGoldFrame = () => levelIndex() >= 5;
+
+/** Повертає рівень, якщо він виріс від останнього перегляду. */
+export function popLevelUp() {
+  const seen = Number(get('level_seen') ?? 0);
+  const now = levelIndex();
+  if (now <= seen) return null;
+  set('level_seen', now);
+  return LEVELS[now];
+}
+
 /* ---------------- дні, XP, вогник ---------------- */
 
 function touchDay(day) {
@@ -80,22 +134,46 @@ export function addSeconds(seconds, day = today()) {
 /**
  * Вогник — скільки днів поспіль було заняття.
  * Сьогоднішній день без відповідей вогник ще не гасить (є час до півночі).
+ * З рівня «Знавець» діє заморозка: один пропущений день серію не обриває.
  */
 export function streak() {
   const days = db.all('SELECT day FROM days WHERE answered > 0 ORDER BY day DESC LIMIT 400')
     .map(r => r.day);
   if (!days.length) return 0;
 
-  const t = today();
-  const gap = daysBetween(days[0], t);
-  if (gap > 1) return 0;
+  const freeze = hasFreeze();
+  let frozen = false;
+
+  const gap = daysBetween(days[0], today());
+  if (gap > 2) return 0;
+  if (gap === 2) {
+    if (!freeze) return 0;
+    frozen = true;
+  }
 
   let count = 1;
   for (let i = 1; i < days.length; i++) {
-    if (daysBetween(days[i], days[i - 1]) === 1) count++;
+    const step = daysBetween(days[i], days[i - 1]);
+    if (step === 1) count++;
+    else if (step === 2 && freeze && !frozen) { frozen = true; count++; }
     else break;
   }
   return count;
+}
+
+/** Чи витрачено заморозку на поточну серію — щоб показати це користувачці. */
+export function freezeUsed() {
+  if (!hasFreeze()) return false;
+  const days = db.all('SELECT day FROM days WHERE answered > 0 ORDER BY day DESC LIMIT 60')
+    .map(r => r.day);
+  if (days.length < 2) return false;
+  if (daysBetween(days[0], today()) === 2) return true;
+  for (let i = 1; i < days.length; i++) {
+    const step = daysBetween(days[i], days[i - 1]);
+    if (step === 2) return true;
+    if (step !== 1) break;
+  }
+  return false;
 }
 
 /** Останні 7 днів (від понеділка) для смужки вогників. */
