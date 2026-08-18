@@ -10,6 +10,7 @@ import { renderQuiz } from './ui/quiz.js';
 import { renderPractice, renderPracticeRun } from './ui/practice.js';
 import { renderStats } from './ui/stats.js';
 import { renderSettings } from './ui/settings.js';
+import { renderDev } from './ui/dev.js';
 import { initReminders } from './notify.js';
 import { needsOnboarding, renderOnboarding } from './ui/onboarding.js';
 import { autoSync } from './sync.js';
@@ -39,6 +40,7 @@ const ROUTES = {
   run: { render: renderPracticeRun, chrome: { back: true, tabs: false } },
   stats: { render: renderStats, tab: 'stats', chrome: { back: false, tabs: true } },
   settings: { render: renderSettings, chrome: { back: true, tabs: false } },
+  dev: { render: renderDev, chrome: { back: true, tabs: false } },
 };
 
 let currentRouteName = 'home';
