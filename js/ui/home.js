@@ -112,8 +112,10 @@ function topicHtml(topic, p) {
   meta.push(p?.best_score ? `найкраще ${Math.round(p.best_score * 100)}%` : `${topic.minutes} хв`);
 
   return `
-    <button class="tile ${done ? 'is-done' : ''}" data-topic="${topic.id}">
-      ${topic.cover ? `<img class="tile__cover" src="${topic.cover}" alt="" loading="lazy">` : ''}
+    <button class="tile ${done ? 'is-done' : ''} ${topic.cover ? '' : 'tile--plain'}" data-topic="${topic.id}">
+      ${topic.cover
+      ? `<img class="tile__cover" src="${topic.cover}" alt="" loading="lazy">`
+      : `<span class="tile__glyph">${topic.icon}</span>`}
       <span class="tile__veil"></span>
       <span class="tile__body">
         <span class="tile__title">${topic.title}</span>

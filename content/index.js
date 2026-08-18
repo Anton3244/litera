@@ -1,7 +1,8 @@
 // Каталог курсу. Тут лише «обкладинки» тем — сам матеріал підвантажується
 // окремим файлом з content/topics/<id>.js, коли тему відкривають.
 //
-// Щоб додати тему: створи файл у content/topics/ і додай рядок у потрібний розділ.
+// Розділи названо так само, як в офіційній програмі НМТ.
+// Повний перелік творів і те, що ще лишилось написати, — у ROADMAP.md.
 
 const ART = 'assets/art/';
 
@@ -10,37 +11,83 @@ export const SECTIONS = [
     id: 'folklore',
     title: 'Усна народна творчість',
     cover: ART + 'cover-folklore.webp',
-    topics: [],
+    topics: [
+      {
+        id: 'pisni-marusi-churay', title: 'Пісні Марусі Чурай', author: '«Віють вітри», «Засвіт встали козаченьки»',
+        icon: '🎶', minutes: 9, cover: ART + 'cover-folklore.webp',
+      },
+      {
+        id: 'istorychni-pisni', title: 'Історичні пісні', author: '«Ой Морозе», «Чи не той то хміль»',
+        icon: '⚔️', minutes: 9,
+      },
+      {
+        id: 'duma-marusya-bohuslavka', title: '«Дума про Марусю Богуславку»', author: 'Народна дума',
+        icon: '🪕', minutes: 10,
+      },
+      {
+        id: 'balada-oy-letila-strila', title: '«Ой летіла стріла»', author: 'Народна балада',
+        icon: '🏹', minutes: 8,
+      },
+    ],
   },
   {
     id: 'davnya',
     title: 'Давня українська література',
     topics: [
       {
-        id: 'slovo-o-polku', title: '«Слово о полку Ігоревім»', author: 'Пам’ятка XII ст.',
+        id: 'povist-mynulykh-lit', title: '«Повість минулих літ»', author: 'Нестор Літописець',
+        icon: '📜', minutes: 11,
+      },
+      {
+        id: 'slovo-o-polku', title: '«Слово про похід Ігорів»', author: 'Пам’ятка XII ст.',
         icon: '🛡️', minutes: 12, cover: ART + 'cover-slovo-o-polku.webp',
+      },
+      {
+        id: 'skovoroda', title: 'Григорій Сковорода', author: 'Три твори з програми',
+        icon: '🐝', minutes: 12,
       },
     ],
   },
   {
     id: 'nova',
-    title: 'Нова українська література',
+    title: 'Література кінця XVIII — початку XX ст.',
     topics: [
+      {
+        id: 'kotlyarevsky-eneida', title: '«Енеїда»', author: 'Іван Котляревський',
+        icon: '⛵', minutes: 13,
+      },
+      {
+        id: 'kotlyarevsky-natalka', title: '«Наталка Полтавка»', author: 'Іван Котляревський',
+        icon: '🎭', minutes: 12,
+      },
       {
         id: 'shevchenko-kateryna', title: '«Катерина»', author: 'Тарас Шевченко',
         icon: '🌾', minutes: 14, cover: ART + 'cover-shevchenko-kateryna.webp',
+      },
+      {
+        id: 'shevchenko-zapovit', title: '«Заповіт»', author: 'Тарас Шевченко',
+        icon: '🕯️', minutes: 8,
+      },
+      {
+        id: 'shevchenko-kavkaz', title: '«Кавказ»', author: 'Тарас Шевченко',
+        icon: '🏔️', minutes: 11,
       },
     ],
   },
   {
     id: 'xx',
-    title: 'Література ХХ століття',
+    title: 'Література ХХ ст.',
     cover: ART + 'cover-xx.webp',
     topics: [],
   },
   {
+    id: 'emigranty',
+    title: 'Письменники-емігранти',
+    topics: [],
+  },
+  {
     id: 'suchasna',
-    title: 'Сучасна українська література',
+    title: 'Сучасний літературний процес',
     cover: ART + 'cover-suchasna.webp',
     topics: [],
   },
