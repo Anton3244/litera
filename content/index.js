@@ -74,6 +74,38 @@ export const SECTIONS = [
         id: 'shevchenko-kavkaz', title: '«Кавказ»', author: 'Тарас Шевченко',
         icon: '🏔️', minutes: 11,
       },
+      {
+        id: 'shevchenko-son', title: '«Сон»', author: 'Тарас Шевченко',
+        icon: '💤', minutes: 12,
+      },
+      {
+        id: 'shevchenko-i-mertvym', title: '«І мертвим, і живим…»', author: 'Тарас Шевченко',
+        icon: '✉️', minutes: 11,
+      },
+      {
+        id: 'kulish-chorna-rada', title: '«Чорна рада»', author: 'Пантелеймон Куліш',
+        icon: '⚜️', minutes: 14,
+      },
+      {
+        id: 'nechuy-kaydasheva-simya', title: '«Кайдашева сім’я»', author: 'Іван Нечуй-Левицький',
+        icon: '🍐', minutes: 13,
+      },
+      {
+        id: 'myrnyy-khiba-revut-voly', title: '«Хіба ревуть воли, як ясла повні?»', author: 'Панас Мирний',
+        icon: '🐂', minutes: 14,
+      },
+      {
+        id: 'karpenko-karyy-martyn-borulya', title: '«Мартин Боруля»', author: 'Іван Карпенко-Карий',
+        icon: '📋', minutes: 12,
+      },
+      {
+        id: 'franko-zakhar-berkut', title: '«Захар Беркут»', author: 'Іван Франко',
+        icon: '🦅', minutes: 13,
+      },
+      {
+        id: 'franko-poeziya', title: 'Поезія Івана Франка', author: '«Зів’яле листя», «Мойсей»',
+        icon: '🍂', minutes: 12,
+      },
     ],
   },
   {
