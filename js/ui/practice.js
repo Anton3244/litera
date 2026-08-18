@@ -97,7 +97,8 @@ export async function renderPracticeRun(root, [modeKey]) {
 }
 
 function flatten(topics) {
-  return topics.flatMap(t => t.questions.map(q => ({ ...q, topicId: t.id, topicTitle: t.title })));
+  return topics.flatMap(t => t.questions.map(q =>
+    ({ ...q, topicId: t.id, topicTitle: t.title, topicAuthor: t.author })));
 }
 
 function showResult(root, mode, results) {

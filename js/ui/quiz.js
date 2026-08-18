@@ -8,7 +8,8 @@ import { shuffle, toast } from '../util.js';
 
 export async function renderQuiz(root, [topicId]) {
   const topic = await loadTopic(topicId);
-  const questions = shuffle(topic.questions).map(q => ({ ...q, topicId }));
+  const questions = shuffle(topic.questions)
+    .map(q => ({ ...q, topicId, topicTitle: topic.title, topicAuthor: topic.author }));
 
   runQuiz(root, {
     questions,

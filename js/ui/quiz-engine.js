@@ -71,9 +71,17 @@ export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, o
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  /** Звідки питання — без цього в «Тренуванні» неможливо зрозуміти, про що мова. */
+  function sourceHtml(q) {
+    if (!q.topicTitle) return '';
+    const author = q.topicAuthor ? ` · ${escapeHtml(q.topicAuthor)}` : '';
+    return `<div class="q__source">${escapeHtml(q.topicTitle)}${author}</div>`;
+  }
+
   function singleHtml(q) {
     return `
       <div class="slide">
+        ${sourceHtml(q)}
         <span class="q__tag">Одна правильна відповідь</span>
         <h2 class="q__prompt">${q.prompt}</h2>
         <div class="opts" id="opts">
@@ -89,6 +97,7 @@ export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, o
   function matchHtml(q) {
     return `
       <div class="slide">
+        ${sourceHtml(q)}
         <span class="q__tag">Відповідність</span>
         <h2 class="q__prompt">${q.prompt}</h2>
         <div class="match" id="match">

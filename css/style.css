@@ -360,6 +360,12 @@ p:last-child{margin-bottom:0}
 .deffield__k{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);font-weight:800}
 
 /* ---------- quiz ---------- */
+.q__source{
+  font-size:13px;font-weight:700;color:var(--text-dim);
+  padding:8px 12px;margin-bottom:12px;border-radius:var(--r-sm);
+  background:var(--bg-elev);border-left:3px solid var(--accent);
+  line-height:1.35;
+}
 .q__prompt{font-size:18px;font-weight:700;margin-bottom:18px;line-height:1.4}
 .q__tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
   color:var(--accent-2);background:rgba(124,92,255,.14);padding:4px 9px;border-radius:999px;margin-bottom:12px}
