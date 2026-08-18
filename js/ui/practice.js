@@ -28,14 +28,14 @@ const MODES = {
   mix: {
     icon: '🎲',
     title: 'Змішаний тест',
-    hint: '10 випадкових питань з усіх тем',
-    pick: (pool) => shuffle(pool).slice(0, 10),
+    hint: '10 випадкових питань з пройдених тем',
+    pick: (pool) => shuffle(studied(pool)).slice(0, 10),
   },
   exam: {
     icon: '📝',
     title: 'Пробний НМТ',
-    hint: 'Усі питання поспіль, без підказок про життя',
-    pick: (pool) => shuffle(pool),
+    hint: 'Усі питання з пройдених тем поспіль',
+    pick: (pool) => shuffle(studied(pool)),
   },
 };
 
@@ -94,6 +94,15 @@ export async function renderPracticeRun(root, [modeKey]) {
     useHearts: false,
     onFinish: results => showResult(root, mode, results),
   });
+}
+
+/**
+ * Питання лише з тем, які вона вже читала. Питати про непройдене —
+ * і безглуздо, і збиває позначки «почато» на головному екрані.
+ */
+function studied(pool) {
+  const started = store.startedTopicIds();
+  return pool.filter(q => started.has(q.topicId));
 }
 
 function flatten(topics) {

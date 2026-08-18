@@ -340,9 +340,31 @@ const SOLID_INTERVAL = 14;
  * Стан теми за пам’яттю, а не за фактом «пройшла тест».
  * Рахується з графіка повторень: чим довший інтервал, тим міцніше сидить у голові.
  */
+/**
+ * Чи бралася вона за тему по-справжньому: читала теорію або складала її тест.
+ * Випадкове питання, що трапилось у змішаному тренуванні, темою не рахується.
+ */
+export function topicStarted(topicId) {
+  const read = db.value('SELECT slides_seen FROM topic_progress WHERE topic_id=?', [topicId], 0);
+  if (read > 0) return true;
+  return db.value("SELECT COUNT(*) FROM answers WHERE topic_id=? AND mode='lesson'", [topicId], 0) > 0;
+}
+
+/** Список тем, за які вона вже бралася — з них і збираємо тренування. */
+export function startedTopicIds() {
+  const rows = db.all(`SELECT topic_id FROM topic_progress WHERE slides_seen > 0
+                       UNION
+                       SELECT DISTINCT topic_id FROM answers WHERE mode = 'lesson'`);
+  return new Set(rows.map(r => r.topic_id));
+}
+
 export function topicState(topicId, questionIds) {
   const total = questionIds.length;
   if (!total) return { state: 'new', mastery: 0, due: 0, seen: 0, total: 0 };
+
+  // Тему, яку ще не відкривали, показуємо як непочату, навіть якщо одне
+  // її питання випадково трапилось у змішаному тесті.
+  if (!topicStarted(topicId)) return { state: 'new', mastery: 0, due: 0, seen: 0, total };
 
   const marks = '?'.repeat(total).split('').join(',');
   const rows = db.all(
