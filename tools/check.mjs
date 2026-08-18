@@ -6,6 +6,7 @@
 // Відео перевіряються через oembed: для видаленого, приватного або
 // неправильного ідентифікатора ютуб віддає помилку. Ключ API не потрібен.
 
+import { readFileSync } from 'node:fs';
 import { SECTIONS, allTopicMeta, loadTopic } from '../content/index.js';
 
 const checkVideos = process.argv.includes('--videos');
@@ -59,6 +60,40 @@ for (const meta of allTopicMeta()) {
 }
 
 console.log(`розділів: ${SECTIONS.length}, тем: ${seenTopics.size}, питань: ${questionCount}, відео: ${videos.length}`);
+
+/* ---------------- сталість ідентифікаторів ---------------- */
+//
+// Прогрес учениці прив’язаний до id тем і питань. Якщо перейменувати їх
+// мовчки, її історія відповідей і графік повторень осиротіють — зовні це
+// виглядатиме як «прогрес пропав». Тому будь-яке зникнення id має бути
+// свідомим і записаним у tools/ids.json → renames.
+
+const snapshot = JSON.parse(readFileSync(new URL('./ids.json', import.meta.url), 'utf8'));
+const renames = snapshot.renames ?? {};
+const current = {};
+for (const meta of allTopicMeta()) {
+  current[meta.id] = (await loadTopic(meta.id)).questions.map(q => q.id).sort();
+}
+
+const resolved = id => renames[id] ?? id;
+
+for (const [topicId, questionIds] of Object.entries(snapshot.topics ?? {})) {
+  const nowTopic = resolved(topicId);
+  if (!current[nowTopic]) {
+    problems.push(`тема «${topicId}» зникла — прогрес по ній осиротіє. Якщо перейменована, додай у ids.json → renames`);
+    continue;
+  }
+  for (const qId of questionIds) {
+    const nowQ = resolved(qId);
+    if (!current[nowTopic].includes(nowQ)) {
+      problems.push(`питання «${qId}» зникло з теми «${nowTopic}» — відповіді на нього осиротіють`);
+    }
+  }
+}
+
+const knownIds = new Set(Object.values(snapshot.topics ?? {}).flat());
+const addedQuestions = Object.values(current).flat().filter(id => !knownIds.has(id)).length;
+if (addedQuestions) console.log(`нових питань від останнього знімка: ${addedQuestions} — онови tools/ids.json`);
 
 if (checkVideos && videos.length) {
   console.log('\nперевіряю відео…');

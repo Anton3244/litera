@@ -1,6 +1,7 @@
 // Тест по темі: питання у форматі НМТ + екран результату.
 
 import * as store from '../store.js';
+import * as db from '../db.js';
 import { loadTopic } from '../../content/index.js';
 import { runQuiz } from './quiz-engine.js';
 import { go, refreshStats } from '../app.js';
@@ -35,6 +36,7 @@ function showResult(root, topic, results, ranOut) {
 
   const fresh = store.checkAwards({ perfect });
   refreshStats();
+  db.dailyBackup();   // тепер у базі точно є що берегти
 
   const ART = 'assets/art/';
   const mood = ranOut ? { art: 'result-hearts-out', title: 'Життя скінчились' }

@@ -194,8 +194,82 @@ export function flush() {
 }
 
 // Підстраховка: зберігаємо, коли вкладку згортають або закривають.
-document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
+// Заразом — щоденна копія: на цей момент у базі вже точно є заняття,
+// на відміну від запуску застосунку, коли вона ще могла бути порожньою.
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) return;
+  flush();
+  dailyBackup();
+});
 window.addEventListener('pagehide', () => flush());
+
+/* ---------------- автоматичні копії на пристрої ---------------- */
+//
+// Копія робиться раз на день і перед кожною ризикованою дією: злиттям
+// із сервером, відновленням з файлу, стиранням. Зберігається тут же,
+// в IndexedDB, тож переживає і невдале оновлення, і випадкове натискання.
+
+const BACKUP_PREFIX = 'backup:';
+const BACKUP_KEEP = 7;
+
+async function idbKeys() {
+  const conn = await idb();
+  return new Promise((resolve, reject) => {
+    const req = conn.transaction(IDB_STORE, 'readonly').objectStore(IDB_STORE).getAllKeys();
+    req.onsuccess = () => resolve(req.result.filter(k => String(k).startsWith(BACKUP_PREFIX)));
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbDelete(key) {
+  const conn = await idb();
+  return new Promise((resolve, reject) => {
+    const tx = conn.transaction(IDB_STORE, 'readwrite');
+    tx.objectStore(IDB_STORE).delete(key);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+/** @param {string} reason що саме збиралися робити — видно в списку копій */
+export async function makeBackup(reason = 'щоденна') {
+  const answers = value('SELECT COUNT(*) FROM answers', [], 0);
+  if (!answers) return null;                       // порожню базу берегти нема сенсу
+
+  const at = new Date().toISOString();
+  await idbPut(BACKUP_PREFIX + at, { at, reason, answers, bytes: db.export() });
+
+  const keys = (await idbKeys()).sort();
+  for (const old of keys.slice(0, Math.max(0, keys.length - BACKUP_KEEP))) {
+    await idbDelete(old);
+  }
+  return at;
+}
+
+/** Щоденна копія — не частіше разу на добу. */
+export async function dailyBackup() {
+  const keys = await idbKeys();
+  const today = new Date().toISOString().slice(0, 10);
+  if (keys.some(k => k.slice(BACKUP_PREFIX.length, BACKUP_PREFIX.length + 10) === today)) return null;
+  return makeBackup('щоденна');
+}
+
+export async function listBackups() {
+  const keys = (await idbKeys()).sort().reverse();
+  const out = [];
+  for (const key of keys) {
+    const rec = await idbGet(key);
+    if (rec) out.push({ key, at: rec.at, reason: rec.reason, answers: rec.answers, size: rec.bytes.length });
+  }
+  return out;
+}
+
+export async function restoreBackup(key) {
+  const rec = await idbGet(key);
+  if (!rec) throw new Error('Копію не знайдено');
+  await makeBackup('перед відновленням');
+  await importBytes(rec.bytes);
+}
 
 /* ---------------- резервна копія ---------------- */
 

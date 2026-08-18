@@ -113,6 +113,13 @@ export async function renderSettings(root) {
         <div><div class="row__label">Відновити з файлу</div><div class="row__hint">Замінить поточний прогрес</div></div>
         <button class="btn btn--ghost" id="s-import" style="width:auto;padding:9px 14px;font-size:14px">Обрати</button>
       </div>
+      <div class="row" style="display:block">
+        <div class="row__label" style="margin-bottom:4px">Копії на пристрої</div>
+        <div class="row__hint" style="margin-bottom:8px">
+          Робляться самі: раз на день і перед кожною ризикованою дією
+        </div>
+        <div id="s-backups" class="backups">завантажую…</div>
+      </div>
       <div class="row">
         <div><div class="row__label" style="color:var(--err)">Стерти весь прогрес</div><div class="row__hint">Скасувати буде неможливо</div></div>
         <button class="btn btn--ghost" id="s-wipe" style="width:auto;padding:9px 14px;font-size:14px;color:var(--err)">Стерти</button>
@@ -227,6 +234,33 @@ export async function renderSettings(root) {
     location.reload();
   });
 
+  const backupsBox = root.querySelector('#s-backups');
+  async function drawBackups() {
+    const list = await db.listBackups();
+    backupsBox.innerHTML = list.length
+      ? list.map(b => `<div class="backup">
+          <div class="backup__body">
+            <div class="backup__when">${new Date(b.at).toLocaleString('uk')}</div>
+            <div class="backup__what">${b.reason} · ${b.answers} відповідей · ${Math.round(b.size / 1024)} КБ</div>
+          </div>
+          <button class="btn btn--ghost" data-restore="${b.key}">Відновити</button>
+        </div>`).join('')
+      : '<div class="row__hint">Поки жодної — з’явиться після першого заняття</div>';
+  }
+  drawBackups();
+
+  backupsBox.addEventListener('click', async e => {
+    const btn = e.target.closest('[data-restore]');
+    if (!btn) return;
+    if (!confirm('Повернути прогрес на цей момент? Поточний стан теж збережеться в копію.')) return;
+    try {
+      await db.restoreBackup(btn.dataset.restore);
+      location.reload();
+    } catch (err) {
+      toast('Не вдалося: ' + err.message, 3000);
+    }
+  });
+
   root.querySelector('#s-export').addEventListener('click', () => {
     db.flush();
     const blob = new Blob([db.exportBytes()], { type: 'application/octet-stream' });
@@ -244,6 +278,7 @@ export async function renderSettings(root) {
     if (!file) return;
     if (!confirm('Замінити поточний прогрес даними з файлу?')) return;
     try {
+      await db.makeBackup('перед відновленням з файлу');
       await db.importBytes(await file.arrayBuffer());
       location.reload();
     } catch (err) {
@@ -254,6 +289,7 @@ export async function renderSettings(root) {
 
   root.querySelector('#s-wipe').addEventListener('click', async () => {
     if (!confirm('Стерти весь прогрес: XP, вогник, історію відповідей?')) return;
+    await db.makeBackup('перед стиранням');
     await db.wipe();
     location.reload();
   });

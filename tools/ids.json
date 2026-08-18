@@ -1,0 +1,187 @@
+{
+  "note": "Знімок ідентифікаторів. Прогрес учениці прив’язаний саме до них — не перейменовуй без запису в renames.",
+  "renames": {},
+  "topics": {
+    "obryadovi-pisni": [
+      "obryad-q1",
+      "obryad-q2",
+      "obryad-q3",
+      "obryad-q4",
+      "obryad-q5",
+      "obryad-q6",
+      "obryad-q7"
+    ],
+    "pisni-marusi-churay": [
+      "churay-q1",
+      "churay-q2",
+      "churay-q3",
+      "churay-q4",
+      "churay-q5",
+      "churay-q6"
+    ],
+    "istorychni-pisni": [
+      "istpisni-q1",
+      "istpisni-q2",
+      "istpisni-q3",
+      "istpisni-q4",
+      "istpisni-q5",
+      "istpisni-q6"
+    ],
+    "duma-marusya-bohuslavka": [
+      "bohuslavka-q1",
+      "bohuslavka-q2",
+      "bohuslavka-q3",
+      "bohuslavka-q4",
+      "bohuslavka-q5",
+      "bohuslavka-q6"
+    ],
+    "balada-oy-letila-strila": [
+      "strila-q1",
+      "strila-q2",
+      "strila-q3",
+      "strila-q4",
+      "strila-q5",
+      "strila-q6"
+    ],
+    "povist-mynulykh-lit": [
+      "povist-q1",
+      "povist-q2",
+      "povist-q3",
+      "povist-q4",
+      "povist-q5",
+      "povist-q6"
+    ],
+    "slovo-o-polku": [
+      "slovo-q1",
+      "slovo-q2",
+      "slovo-q3",
+      "slovo-q4",
+      "slovo-q5",
+      "slovo-q6",
+      "slovo-q7"
+    ],
+    "skovoroda": [
+      "skovoroda-q1",
+      "skovoroda-q2",
+      "skovoroda-q3",
+      "skovoroda-q4",
+      "skovoroda-q5",
+      "skovoroda-q6",
+      "skovoroda-q7"
+    ],
+    "kotlyarevsky-eneida": [
+      "eneida-q1",
+      "eneida-q2",
+      "eneida-q3",
+      "eneida-q4",
+      "eneida-q5",
+      "eneida-q6",
+      "eneida-q7"
+    ],
+    "kotlyarevsky-natalka": [
+      "natalka-q1",
+      "natalka-q2",
+      "natalka-q3",
+      "natalka-q4",
+      "natalka-q5",
+      "natalka-q6"
+    ],
+    "shevchenko-kateryna": [
+      "kateryna-q1",
+      "kateryna-q2",
+      "kateryna-q3",
+      "kateryna-q4",
+      "kateryna-q5",
+      "kateryna-q6",
+      "kateryna-q7"
+    ],
+    "shevchenko-zapovit": [
+      "zapovit-q1",
+      "zapovit-q2",
+      "zapovit-q3",
+      "zapovit-q4",
+      "zapovit-q5",
+      "zapovit-q6"
+    ],
+    "shevchenko-kavkaz": [
+      "kavkaz-q1",
+      "kavkaz-q2",
+      "kavkaz-q3",
+      "kavkaz-q4",
+      "kavkaz-q5",
+      "kavkaz-q6"
+    ],
+    "shevchenko-son": [
+      "son-q1",
+      "son-q2",
+      "son-q3",
+      "son-q4",
+      "son-q5",
+      "son-q6"
+    ],
+    "shevchenko-i-mertvym": [
+      "imertvym-q1",
+      "imertvym-q2",
+      "imertvym-q3",
+      "imertvym-q4",
+      "imertvym-q5",
+      "imertvym-q6"
+    ],
+    "kulish-chorna-rada": [
+      "chornarada-q1",
+      "chornarada-q2",
+      "chornarada-q3",
+      "chornarada-q4",
+      "chornarada-q5",
+      "chornarada-q6"
+    ],
+    "nechuy-kaydasheva-simya": [
+      "kaydash-q1",
+      "kaydash-q2",
+      "kaydash-q3",
+      "kaydash-q4",
+      "kaydash-q5",
+      "kaydash-q6"
+    ],
+    "myrnyy-khiba-revut-voly": [
+      "voly-q1",
+      "voly-q2",
+      "voly-q3",
+      "voly-q4",
+      "voly-q5",
+      "voly-q6"
+    ],
+    "karpenko-karyy-martyn-borulya": [
+      "borulya-q1",
+      "borulya-q2",
+      "borulya-q3",
+      "borulya-q4",
+      "borulya-q5",
+      "borulya-q6"
+    ],
+    "franko-zakhar-berkut": [
+      "berkut-q1",
+      "berkut-q2",
+      "berkut-q3",
+      "berkut-q4",
+      "berkut-q5",
+      "berkut-q6"
+    ],
+    "franko-poeziya": [
+      "franko-q1",
+      "franko-q2",
+      "franko-q3",
+      "franko-q4",
+      "franko-q5",
+      "franko-q6"
+    ],
+    "rody-i-zhanry": [
+      "rody-q1",
+      "rody-q2",
+      "rody-q3",
+      "rody-q4",
+      "rody-q5",
+      "rody-q6"
+    ]
+  }
+}

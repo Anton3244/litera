@@ -1,6 +1,7 @@
 // Точка входу: ініціалізація бази, маршрутизація, верхня панель.
 
 import { initDb } from './db.js';
+import * as dbModule from './db.js';
 import * as store from './store.js';
 import { $, $$, toast } from './util.js';
 import { renderHome } from './ui/home.js';
@@ -12,6 +13,8 @@ import { renderSettings } from './ui/settings.js';
 import { initReminders } from './notify.js';
 import { needsOnboarding, renderOnboarding } from './ui/onboarding.js';
 import { autoSync } from './sync.js';
+import { applyUpdates } from './updates.js';
+import { showWhatsNew } from './ui/whatsnew.js';
 
 let viewEl = $('#view');
 const topbar = $('#topbar');
@@ -134,9 +137,16 @@ async function boot() {
       location.hash = '#/home';
     }
 
+    // Раз на добу — копія бази. Робиться до будь-яких змін, щоб було куди відкотитись.
+    dbModule.dailyBackup();
+
+    // Якщо питання в темах змінились — скидаємо саме ті теми й показуємо, що нового.
+    const update = await applyUpdates();
+
     await route();
     initReminders();
     registerServiceWorker();
+    showWhatsNew(update).then(() => { if (update.reset.length) route(); });
 
     // Догнати інший пристрій — тихо, у фоні. Якщо щось приїхало, оновлюємо екран.
     autoSync().then(res => { if (res?.added) route(); });

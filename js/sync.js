@@ -168,6 +168,7 @@ export async function syncNow() {
   if (!isConfigured()) throw new Error('Синхронізацію не налаштовано');
 
   const remote = await request('GET');
+  if (remote) await db.makeBackup('перед синхронізацією');
   const added = remote ? merge(remote) : 0;
 
   await db.flush();
