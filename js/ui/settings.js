@@ -5,6 +5,7 @@ import * as db from '../db.js';
 import { enableReminders, disableReminders, syncMirror } from '../notify.js';
 import { toast, dayKey } from '../util.js';
 import { refreshStats, applyAccent } from '../app.js';
+import * as sync from '../sync.js';
 
 const ACCENTS = [
   { name: 'Бурштин', value: '#ffb43d' },
@@ -64,6 +65,32 @@ export async function renderSettings(root) {
       Щоб нагадування приходили надійно, додай сайт на головний екран телефона
       («Поділитися» → «На початковий екран»).
     </p>
+
+    <div class="section-h"><span class="section-h__title">Синхронізація</span><span class="section-h__line"></span></div>
+    <div class="card">
+      <div class="row">
+        <div><div class="row__label">Адреса сервера</div>
+        <div class="row__hint">Свій Worker — див. sync/README.md</div></div>
+        <input id="s-sync-url" type="text" value="${escapeAttr(store.get('sync_url'))}" placeholder="https://…"
+          style="width:150px;background:var(--bg-elev-2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 11px;font:inherit;font-size:13px">
+      </div>
+      <div class="row">
+        <div><div class="row__label">Код</div>
+        <div class="row__hint">Однаковий на всіх пристроях. Нікому не показуй.</div></div>
+        <input id="s-sync-code" type="text" value="${escapeAttr(store.get('sync_code'))}" placeholder="——"
+          style="width:110px;background:var(--bg-elev-2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 11px;font:inherit;font-size:14px;letter-spacing:.1em;text-transform:uppercase">
+      </div>
+      <div class="row">
+        <div><div class="row__label" id="s-sync-state">${store.get('sync_last') ? 'Востаннє: ' + new Date(store.get('sync_last')).toLocaleString('uk') : 'Ще не синхронізовано'}</div>
+        <div class="row__hint">Нічого не затирається — журнали двох пристроїв зливаються</div></div>
+        <button class="btn btn--ghost" id="s-sync-now" style="width:auto;padding:9px 14px;font-size:14px">Синхронізувати</button>
+      </div>
+      <div class="row">
+        <div><div class="row__label">Створити новий код</div>
+        <div class="row__hint">Потім введи його на другому пристрої</div></div>
+        <button class="btn btn--ghost" id="s-sync-new" style="width:auto;padding:9px 14px;font-size:14px">Створити</button>
+      </div>
+    </div>
 
     <div class="section-h"><span class="section-h__title">Дані</span><span class="section-h__line"></span></div>
     <div class="card">
@@ -142,6 +169,38 @@ export async function renderSettings(root) {
     store.set('accent', btn.dataset.accent);
     applyAccent();
     for (const b of root.querySelectorAll('[data-accent]')) b.classList.toggle('is-on', b === btn);
+  });
+
+  const syncState = root.querySelector('#s-sync-state');
+  root.querySelector('#s-sync-url').addEventListener('change', e =>
+    store.set('sync_url', e.target.value.trim()));
+  root.querySelector('#s-sync-code').addEventListener('change', e =>
+    store.set('sync_code', e.target.value.trim().toUpperCase()));
+
+  root.querySelector('#s-sync-new').addEventListener('click', () => {
+    const code = sync.makeCode(8);
+    store.set('sync_code', code);
+    root.querySelector('#s-sync-code').value = code;
+    toast('Код створено — введи його на другому пристрої', 3500);
+  });
+
+  root.querySelector('#s-sync-now').addEventListener('click', async e => {
+    const btn = e.currentTarget;
+    btn.disabled = true;
+    syncState.textContent = 'Синхронізую…';
+    try {
+      const { added, hadRemote } = await sync.syncNow();
+      syncState.textContent = added
+        ? `Додано ${added} записів з іншого пристрою`
+        : hadRemote ? 'Усе вже збігалося' : 'Прогрес відправлено на сервер';
+      toast('Готово', 2200);
+      setTimeout(() => location.reload(), 900);
+    } catch (err) {
+      syncState.textContent = 'Не вийшло: ' + err.message;
+      toast(err.message, 3500);
+    } finally {
+      btn.disabled = false;
+    }
   });
 
   root.querySelector('#s-tour').addEventListener('click', () => {

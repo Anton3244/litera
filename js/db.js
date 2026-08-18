@@ -32,6 +32,8 @@ CREATE TABLE IF NOT EXISTS topic_progress (
 -- Кожна відповідь, назавжди. З цього рахуємо статистику й слабкі місця.
 CREATE TABLE IF NOT EXISTS answers (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  uid         TEXT UNIQUE,
+  device_id   TEXT,
   topic_id    TEXT NOT NULL,
   question_id TEXT NOT NULL,
   correct     INTEGER NOT NULL,
@@ -118,8 +120,19 @@ export async function initDb() {
   const bytes = await idbGet(IDB_KEY);
   db = bytes ? new SQL.Database(new Uint8Array(bytes)) : new SQL.Database();
   db.run(SCHEMA);
+  migrate();
   await flush();
   return db;
+}
+
+/** Доганяє старі бази, створені до появи синхронізації. */
+function migrate() {
+  const cols = all('PRAGMA table_info(answers)').map(c => c.name);
+  if (!cols.includes('uid')) db.run('ALTER TABLE answers ADD COLUMN uid TEXT');
+  if (!cols.includes('device_id')) db.run('ALTER TABLE answers ADD COLUMN device_id TEXT');
+  db.run('CREATE UNIQUE INDEX IF NOT EXISTS idx_answers_uid ON answers(uid)');
+  // старим рядкам роздаємо ідентифікатори, інакше вони не поїдуть на інший пристрій
+  db.run(`UPDATE answers SET uid = 'old-' || id WHERE uid IS NULL`);
 }
 
 /* ---------------- запити ---------------- */

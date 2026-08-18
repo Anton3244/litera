@@ -39,6 +39,11 @@ export function getBool(key) {
   return get(key) === '1';
 }
 
+/** Перечитує налаштування з бази — потрібно після злиття при синхронізації. */
+export function reloadSettings() {
+  settingsCache = null;
+}
+
 export function set(key, value) {
   if (!settingsCache) loadSettings();
   settingsCache[key] = String(value);
@@ -211,8 +216,10 @@ export function recordAnswer({ topicId, questionId, correct, ms = 0, mode = 'les
 
   db.tx(() => {
     db.run(
-      'INSERT INTO answers(topic_id,question_id,correct,ms,mode,day,created_at) VALUES(?,?,?,?,?,?,?)',
-      [topicId, questionId, correct ? 1 : 0, Math.round(ms), mode, day, nowIso()]
+      `INSERT INTO answers(uid, device_id, topic_id, question_id, correct, ms, mode, day, created_at)
+       VALUES(?,?,?,?,?,?,?,?,?)`,
+      [crypto.randomUUID(), get('device_id') || null,
+        topicId, questionId, correct ? 1 : 0, Math.round(ms), mode, day, nowIso()]
     );
     db.run('INSERT OR IGNORE INTO days(day) VALUES(?)', [day]);
     db.run('UPDATE days SET answered = answered + 1, correct = correct + ?, xp = xp + ? WHERE day = ?',
@@ -223,8 +230,8 @@ export function recordAnswer({ topicId, questionId, correct, ms = 0, mode = 'les
   return xp;
 }
 
-/** SM-2 у спрощеному вигляді. */
-function scheduleReview(topicId, questionId, correct, day) {
+/** SM-2 у спрощеному вигляді. Експортовано — потрібно для перерахунку при злитті. */
+export function scheduleReview(topicId, questionId, correct, day) {
   const cur = db.one('SELECT * FROM srs WHERE question_id=?', [questionId])
     ?? { ease: 2.5, interval_days: 0, reps: 0, lapses: 0 };
 
