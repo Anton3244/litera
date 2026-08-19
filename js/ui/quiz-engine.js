@@ -73,15 +73,33 @@ export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, o
 
   /** Звідки питання — без цього в «Тренуванні» неможливо зрозуміти, про що мова. */
   function sourceHtml(q) {
+    // Коли текст наведено поруч, підпис теми зайвий — а часом і підказує відповідь.
+    if (q.passage) return '';
     if (!q.topicTitle) return '';
     const author = q.topicAuthor ? ` · ${escapeHtml(q.topicAuthor)}` : '';
     return `<div class="q__source">${escapeHtml(q.topicTitle)}${author}</div>`;
+  }
+
+  /**
+   * Наведений текст, до якого ставиться питання. На НМТ це третина роботи:
+   * незнайомий вірш або уривок прози, а до нього — п’ять завдань поспіль.
+   */
+  function passageHtml(q) {
+    if (!q.passage) return '';
+    const p = q.passage;
+    const kind = p.kind === 'prose' ? 'passage--prose' : 'passage--verse';
+    return `
+      <div class="passage ${kind}">
+        <div class="passage__text">${escapeHtml(p.text)}</div>
+        ${p.source ? `<div class="passage__source">${escapeHtml(p.source)}</div>` : ''}
+      </div>`;
   }
 
   function singleHtml(q) {
     return `
       <div class="slide">
         ${sourceHtml(q)}
+        ${passageHtml(q)}
         <span class="q__tag">Одна правильна відповідь</span>
         <h2 class="q__prompt">${q.prompt}</h2>
         <div class="opts" id="opts">
@@ -98,6 +116,7 @@ export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, o
     return `
       <div class="slide">
         ${sourceHtml(q)}
+        ${passageHtml(q)}
         <span class="q__tag">Відповідність</span>
         <h2 class="q__prompt">${q.prompt}</h2>
         <div class="match" id="match">

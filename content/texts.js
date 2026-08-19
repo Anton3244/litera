@@ -7,6 +7,22 @@
 // Кожне посилання перевірено: `node tools/check.mjs --links`.
 
 export const TEXTS = {
+  'cluster-franko-zernya': [
+    { title: 'Ой ти, дівчино, з горіха зерня', url: 'https://www.ukrlib.com.ua/books/printit.php?tid=622', source: 'УкрЛіб' },
+  ],
+
+  'cluster-kotsyubynsky-tsvit': [
+    { title: 'Цвіт яблуні (повністю)', url: 'https://www.ukrlib.com.ua/books/printit.php?tid=2548', source: 'УкрЛіб' },
+  ],
+
+  'cluster-lesya-vesna': [
+    { title: 'Стояла я і слухала весну', url: 'https://www.ukrlib.com.ua/books/printit.php?tid=521', source: 'УкрЛіб' },
+  ],
+
+  'cluster-stefanyk-novyna': [
+    { title: 'Новина (повністю)', url: 'https://www.ukrlib.com.ua/books/printit.php?tid=339', source: 'УкрЛіб' },
+  ],
+
   'antonych-rizdvo': [
     { title: 'Різдво', url: 'https://www.ukrlib.com.ua/books/printit.php?tid=4925', source: 'УкрЛіб' },
   ],

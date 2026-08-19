@@ -279,6 +279,32 @@ export const SECTIONS = [
       },
     ],
   },
+  {
+    id: 'rozbir',
+    title: 'Аналіз незнайомого тексту',
+    topics: [
+      {
+        id: 'cluster-yak-rozbyraty', title: 'Як розбирати незнайомий текст', author: 'Завдання 16–25',
+        icon: '🧩', minutes: 10,
+      },
+      {
+        id: 'cluster-lesya-vesna', title: 'Вірш І: «Стояла я і слухала весну…»', author: 'Леся Українка',
+        icon: '🌱', minutes: 8,
+      },
+      {
+        id: 'cluster-franko-zernya', title: 'Вірш ІІ: «Ой ти, дівчино, з горіха зерня…»', author: 'Іван Франко',
+        icon: '🌰', minutes: 8,
+      },
+      {
+        id: 'cluster-stefanyk-novyna', title: 'Проза І: «Новина»', author: 'Василь Стефаник',
+        icon: '🪨', minutes: 9,
+      },
+      {
+        id: 'cluster-kotsyubynsky-tsvit', title: 'Проза ІІ: «Цвіт яблуні»', author: 'Михайло Коцюбинський',
+        icon: '🌸', minutes: 9,
+      },
+    ],
+  },
 ];
 
 const INDEX = new Map();

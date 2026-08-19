@@ -458,6 +458,42 @@
       "napryamy-q4",
       "napryamy-q5",
       "napryamy-q6"
+    ],
+    "cluster-yak-rozbyraty": [
+      "rozbir-q1",
+      "rozbir-q2",
+      "rozbir-q3",
+      "rozbir-q4",
+      "rozbir-q5",
+      "rozbir-q6"
+    ],
+    "cluster-lesya-vesna": [
+      "clesya-q1",
+      "clesya-q2",
+      "clesya-q3",
+      "clesya-q4",
+      "clesya-q5"
+    ],
+    "cluster-franko-zernya": [
+      "cfranko-q1",
+      "cfranko-q2",
+      "cfranko-q3",
+      "cfranko-q4",
+      "cfranko-q5"
+    ],
+    "cluster-stefanyk-novyna": [
+      "cstef-q1",
+      "cstef-q2",
+      "cstef-q3",
+      "cstef-q4",
+      "cstef-q5"
+    ],
+    "cluster-kotsyubynsky-tsvit": [
+      "ckots-q1",
+      "ckots-q2",
+      "ckots-q3",
+      "ckots-q4",
+      "ckots-q5"
     ]
   }
 }

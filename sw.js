@@ -1,7 +1,7 @@
 // Service worker: офлайн-режим і щоденне нагадування.
 // Піднімай CACHE_VERSION після зміни файлів — інакше браузер віддасть старі.
 
-const CACHE_VERSION = 'litera-v28';
+const CACHE_VERSION = 'litera-v29';
 
 const ART = [
   // обкладинки тем
@@ -71,6 +71,8 @@ const SHELL = [
     'kostenko-marusya-churay', 'bahryanyy-tyhrolovy', 'malanyuk-uryvok-z-poemy',
     'suchasnyy-protses', 'teoriya-virshuvannya', 'teoriya-tropy', 'teoriya-napryamy',
     'rody-i-zhanry',
+    'cluster-yak-rozbyraty', 'cluster-lesya-vesna', 'cluster-franko-zernya',
+    'cluster-stefanyk-novyna', 'cluster-kotsyubynsky-tsvit',
   ].map(n => `content/topics/${n}.js`),
 ];
 

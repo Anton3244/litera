@@ -397,6 +397,25 @@ p:last-child{margin-bottom:0}
 .facts li::before{content:"\25B8";color:var(--accent);font-weight:800;flex:none}
 .facts b{color:var(--text)}
 
+/* наведений текст у завданні */
+.passage{
+  position:relative;
+  background:var(--bg-elev);border:1px solid var(--line);
+  border-radius:var(--r-md);padding:14px 16px;margin-bottom:16px;
+  overflow-y:auto;
+}
+/* Вірш майже завжди влазить цілком; проза — ні, тож їй коробка нижча. */
+.passage--verse{max-height:60vh}
+.passage--prose{max-height:44vh}
+/* Смужка прокрутки має бути помітною: інакше не зрозуміло, що текст довший. */
+.passage::-webkit-scrollbar{width:6px}
+.passage::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+.passage::-webkit-scrollbar-thumb:hover{background:var(--text-faint)}
+.passage__text{white-space:pre-line;font-size:15px;line-height:1.65;color:#e6dff5}
+.passage--verse .passage__text{font-style:italic}
+.passage--prose .passage__text{font-size:14.5px;text-align:justify}
+.passage__source{margin-top:10px;text-align:right;font-size:13px;font-weight:700;color:var(--text-dim)}
+
 /* посилання на повний текст твору */
 .srcbox{
   background:var(--bg-elev);border:1px solid var(--line);
