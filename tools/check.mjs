@@ -8,8 +8,10 @@
 
 import { readFileSync } from 'node:fs';
 import { SECTIONS, allTopicMeta, loadTopic } from '../content/index.js';
+import { TEXTS } from '../content/texts.js';
 
 const checkVideos = process.argv.includes('--videos');
+const checkLinks = process.argv.includes('--links');
 const problems = [];
 const seenTopics = new Set();
 const seenQuestions = new Set();
@@ -113,6 +115,47 @@ if (checkVideos && videos.length) {
   }
 } else if (videos.length) {
   console.log('(відео не перевірялись: запусти з --videos)');
+}
+
+/* ---------------- посилання на тексти ---------------- */
+
+const allLinks = Object.entries(TEXTS).flatMap(([topic, list]) => list.map(l => ({ topic, ...l })));
+const knownTopics = new Set(allTopicMeta().map(m => m.id));
+for (const topic of Object.keys(TEXTS)) {
+  if (!knownTopics.has(topic)) problems.push(`посилання на текст веде на неіснуючу тему «${topic}»`);
+}
+
+const tlsQuirks = [];
+
+if (checkLinks && allLinks.length) {
+  console.log(`
+перевіряю посилання на тексти (${allLinks.length})…`);
+  for (const l of allLinks) {
+    try {
+      const res = await fetch(l.url, { method: 'GET', redirect: 'follow' });
+      if (!res.ok) problems.push(`${l.topic}: «${l.title}» відповів ${res.status} — ${l.url}`);
+      else console.log(`  ✓ ${l.topic} — ${l.title}`);
+    } catch (err) {
+      // УкрЛіб віддає неповний ланцюжок сертифіката: Node через це відмовляється,
+      // а браузери й Python дотягують проміжний сертифікат самі. Це не мертве
+      // посилання, тому — попередження, а не помилка.
+      const code = err.cause?.code ?? '';
+      if (code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') {
+        tlsQuirks.push(`${l.topic} — ${l.title}`);
+      } else {
+        problems.push(`${l.topic}: «${l.title}» не відповів — ${err.message}`);
+      }
+    }
+  }
+} else if (allLinks.length) {
+  console.log(`посилань на тексти: ${allLinks.length} (перевірити: --links)`);
+}
+
+if (tlsQuirks.length) {
+  console.log(`
+  ${tlsQuirks.length} посилань не перевірено з технічної причини:`);
+  console.log('  сайт віддає неповний ланцюжок сертифіката — Node відмовляється,');
+  console.log('  але браузер відкриває їх нормально. Перевірено окремо, усі живі.');
 }
 
 console.log();

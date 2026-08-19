@@ -1,7 +1,7 @@
 // Service worker: офлайн-режим і щоденне нагадування.
 // Піднімай CACHE_VERSION після зміни файлів — інакше браузер віддасть старі.
 
-const CACHE_VERSION = 'litera-v25';
+const CACHE_VERSION = 'litera-v27';
 
 const ART = [
   // обкладинки тем
@@ -52,6 +52,7 @@ const SHELL = [
   'js/ui/dev.js',
   'content/index.js',
   'content/videos.js',
+  'content/texts.js',
   ...[
     'obryadovi-pisni', 'pisni-marusi-churay', 'istorychni-pisni', 'duma-marusya-bohuslavka',
     'balada-oy-letila-strila', 'povist-mynulykh-lit', 'slovo-o-polku', 'skovoroda',
@@ -61,6 +62,14 @@ const SHELL = [
     'karpenko-karyy-martyn-borulya', 'franko-zakhar-berkut', 'franko-poeziya',
     'kotsyubynsky-tini', 'kotsyubynsky-intermezzo', 'stefanyk-kaminnyy-khrest',
     'kobylyanska-valse', 'lesya-contra-spem-spero', 'lesya-lisova-pisnya',
+    'voronyy-blakytna-panna', 'oles-poeziya', 'tychyna-poeziya', 'rylsky-u-tepli-dni',
+    'khvylovyy-ya-romantyka', 'yanovsky-mayster-korablya', 'pidmohylnyy-misto',
+    'vyshnya-usmishky', 'kulish-myna-mazaylo', 'antonych-rizdvo', 'sosyura-lyubit-ukrainu',
+    'dovzhenko-zacharovana-desna', 'malyshko-pisnya-pro-rushnyk', 'honchar-modry-kamen',
+    'symonenko-poeziya', 'holoborodko-nasha-mova', 'tyutyunnyk-try-zozuli', 'stus-hospody',
+    'drach-balada-pro-sonyashnyk', 'pavlychko-dva-kolory', 'kostenko-strashni-slova',
+    'kostenko-marusya-churay', 'bahryanyy-tyhrolovy', 'malanyuk-uryvok-z-poemy',
+    'suchasnyy-protses', 'teoriya-virshuvannya', 'teoriya-tropy', 'teoriya-napryamy',
     'rody-i-zhanry',
   ].map(n => `content/topics/${n}.js`),
 ];

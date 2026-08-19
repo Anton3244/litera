@@ -397,6 +397,20 @@ p:last-child{margin-bottom:0}
 .facts li::before{content:"\25B8";color:var(--accent);font-weight:800;flex:none}
 .facts b{color:var(--text)}
 
+/* посилання на повний текст твору */
+.srcbox{
+  background:var(--bg-elev);border:1px solid var(--line);
+  border-left:3px solid var(--accent-2);border-radius:var(--r-sm);
+  padding:12px 14px;margin:16px 0 4px;
+}
+.srcbox__head{font-size:13px;font-weight:800;margin-bottom:8px}
+.srcbox__link{
+  display:block;color:var(--accent-2);font-size:14.5px;font-weight:600;
+  text-decoration:none;padding:5px 0;line-height:1.35;
+}
+.srcbox__link:active{opacity:.6}
+.srcbox__note{color:var(--text-faint);font-size:12px;margin-top:6px}
+
 /* відео до теми */
 .video{
   position:relative;display:block;width:100%;aspect-ratio:16/9;

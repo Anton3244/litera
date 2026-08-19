@@ -225,6 +225,207 @@
       "lisova-q6",
       "lisova-q7"
     ],
+    "voronyy-blakytna-panna": [
+      "panna-q1",
+      "panna-q2",
+      "panna-q3",
+      "panna-q4",
+      "panna-q5",
+      "panna-q6"
+    ],
+    "oles-poeziya": [
+      "oles-q1",
+      "oles-q2",
+      "oles-q3",
+      "oles-q4",
+      "oles-q5",
+      "oles-q6"
+    ],
+    "tychyna-poeziya": [
+      "tychyna-q1",
+      "tychyna-q2",
+      "tychyna-q3",
+      "tychyna-q4",
+      "tychyna-q5",
+      "tychyna-q6"
+    ],
+    "rylsky-u-tepli-dni": [
+      "rylsky-q1",
+      "rylsky-q2",
+      "rylsky-q3",
+      "rylsky-q4",
+      "rylsky-q5",
+      "rylsky-q6"
+    ],
+    "khvylovyy-ya-romantyka": [
+      "romantyka-q1",
+      "romantyka-q2",
+      "romantyka-q3",
+      "romantyka-q4",
+      "romantyka-q5",
+      "romantyka-q6",
+      "romantyka-q7"
+    ],
+    "yanovsky-mayster-korablya": [
+      "mayster-q1",
+      "mayster-q2",
+      "mayster-q3",
+      "mayster-q4",
+      "mayster-q5",
+      "mayster-q6"
+    ],
+    "pidmohylnyy-misto": [
+      "misto-q1",
+      "misto-q2",
+      "misto-q3",
+      "misto-q4",
+      "misto-q5",
+      "misto-q6"
+    ],
+    "vyshnya-usmishky": [
+      "vyshnya-q1",
+      "vyshnya-q2",
+      "vyshnya-q3",
+      "vyshnya-q4",
+      "vyshnya-q5",
+      "vyshnya-q6"
+    ],
+    "kulish-myna-mazaylo": [
+      "mazaylo-q1",
+      "mazaylo-q2",
+      "mazaylo-q3",
+      "mazaylo-q4",
+      "mazaylo-q5",
+      "mazaylo-q6"
+    ],
+    "antonych-rizdvo": [
+      "rizdvo-q1",
+      "rizdvo-q2",
+      "rizdvo-q3",
+      "rizdvo-q4",
+      "rizdvo-q5",
+      "rizdvo-q6"
+    ],
+    "sosyura-lyubit-ukrainu": [
+      "sosyura-q1",
+      "sosyura-q2",
+      "sosyura-q3",
+      "sosyura-q4",
+      "sosyura-q5",
+      "sosyura-q6"
+    ],
+    "dovzhenko-zacharovana-desna": [
+      "desna-q1",
+      "desna-q2",
+      "desna-q3",
+      "desna-q4",
+      "desna-q5",
+      "desna-q6"
+    ],
+    "malyshko-pisnya-pro-rushnyk": [
+      "rushnyk-q1",
+      "rushnyk-q2",
+      "rushnyk-q3",
+      "rushnyk-q4",
+      "rushnyk-q5",
+      "rushnyk-q6"
+    ],
+    "honchar-modry-kamen": [
+      "modry-q1",
+      "modry-q2",
+      "modry-q3",
+      "modry-q4",
+      "modry-q5",
+      "modry-q6"
+    ],
+    "symonenko-poeziya": [
+      "symonenko-q1",
+      "symonenko-q2",
+      "symonenko-q3",
+      "symonenko-q4",
+      "symonenko-q5",
+      "symonenko-q6"
+    ],
+    "holoborodko-nasha-mova": [
+      "nashamova-q1",
+      "nashamova-q2",
+      "nashamova-q3",
+      "nashamova-q4",
+      "nashamova-q5",
+      "nashamova-q6"
+    ],
+    "tyutyunnyk-try-zozuli": [
+      "zozuli-q1",
+      "zozuli-q2",
+      "zozuli-q3",
+      "zozuli-q4",
+      "zozuli-q5",
+      "zozuli-q6"
+    ],
+    "stus-hospody": [
+      "stus-q1",
+      "stus-q2",
+      "stus-q3",
+      "stus-q4",
+      "stus-q5",
+      "stus-q6"
+    ],
+    "drach-balada-pro-sonyashnyk": [
+      "sonyashnyk-q1",
+      "sonyashnyk-q2",
+      "sonyashnyk-q3",
+      "sonyashnyk-q4",
+      "sonyashnyk-q5",
+      "sonyashnyk-q6"
+    ],
+    "pavlychko-dva-kolory": [
+      "kolory-q1",
+      "kolory-q2",
+      "kolory-q3",
+      "kolory-q4",
+      "kolory-q5",
+      "kolory-q6"
+    ],
+    "kostenko-strashni-slova": [
+      "strashni-q1",
+      "strashni-q2",
+      "strashni-q3",
+      "strashni-q4",
+      "strashni-q5",
+      "strashni-q6"
+    ],
+    "kostenko-marusya-churay": [
+      "marusya-q1",
+      "marusya-q2",
+      "marusya-q3",
+      "marusya-q4",
+      "marusya-q5",
+      "marusya-q6"
+    ],
+    "bahryanyy-tyhrolovy": [
+      "tyhrolovy-q1",
+      "tyhrolovy-q2",
+      "tyhrolovy-q3",
+      "tyhrolovy-q4",
+      "tyhrolovy-q5",
+      "tyhrolovy-q6"
+    ],
+    "malanyuk-uryvok-z-poemy": [
+      "malanyuk-q1",
+      "malanyuk-q2",
+      "malanyuk-q3",
+      "malanyuk-q4",
+      "malanyuk-q5",
+      "malanyuk-q6"
+    ],
+    "suchasnyy-protses": [
+      "suchasnyy-q1",
+      "suchasnyy-q2",
+      "suchasnyy-q3",
+      "suchasnyy-q4",
+      "suchasnyy-q5",
+      "suchasnyy-q6"
+    ],
     "rody-i-zhanry": [
       "rody-q1",
       "rody-q2",
@@ -232,6 +433,31 @@
       "rody-q4",
       "rody-q5",
       "rody-q6"
+    ],
+    "teoriya-virshuvannya": [
+      "virsh-q1",
+      "virsh-q2",
+      "virsh-q3",
+      "virsh-q4",
+      "virsh-q5",
+      "virsh-q6"
+    ],
+    "teoriya-tropy": [
+      "tropy-q1",
+      "tropy-q2",
+      "tropy-q3",
+      "tropy-q4",
+      "tropy-q5",
+      "tropy-q6",
+      "tropy-q7"
+    ],
+    "teoriya-napryamy": [
+      "napryamy-q1",
+      "napryamy-q2",
+      "napryamy-q3",
+      "napryamy-q4",
+      "napryamy-q5",
+      "napryamy-q6"
     ]
   }
 }
