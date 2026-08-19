@@ -1,7 +1,7 @@
 // Прикладний рівень над SQLite: XP, вогник, прогрес тем, інтервальні повторення.
 
 import * as db from './db.js';
-import { dayKey, addDays, daysBetween, nowIso, clamp } from './util.js';
+import { dayKey, addDays, daysBetween, nowIso, clamp, plural } from './util.js';
 
 export const XP_CORRECT = 10;
 export const XP_LESSON_DONE = 25;
@@ -425,7 +425,9 @@ export function dailyPlan(topics) {
     {
       key: 'review',
       title: 'Повторити вивчене',
-      hint: due ? `${due} питань чекає — щоб учора не забулося` : 'усе повторено',
+      hint: due
+        ? `${due} ${plural(due, 'питання чекає', 'питання чекають', 'питань чекає')} — щоб учора не забулося`
+        : 'усе повторено',
       done: due === 0,
       skip: due === 0 && !states.some(s => s.seen > 0),
       go: 'run/due',

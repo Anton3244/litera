@@ -18,6 +18,7 @@ const seenQuestions = new Set();
 const videos = [];
 
 let questionCount = 0;
+const byTopic = {};
 
 for (const meta of allTopicMeta()) {
   if (seenTopics.has(meta.id)) problems.push(`дубль теми: ${meta.id}`);
@@ -36,6 +37,8 @@ for (const meta of allTopicMeta()) {
       }
     }
   }
+
+  byTopic[meta.id] = topic.questions ?? [];
 
   for (const q of topic.questions ?? []) {
     questionCount++;
@@ -96,6 +99,35 @@ for (const [topicId, questionIds] of Object.entries(snapshot.topics ?? {})) {
 const knownIds = new Set(Object.values(snapshot.topics ?? {}).flat());
 const addedQuestions = Object.values(current).flat().filter(id => !knownIds.has(id)).length;
 if (addedQuestions) console.log(`нових питань від останнього знімка: ${addedQuestions} — онови tools/ids.json`);
+
+/* ---------------- довжина варіантів ----------------
+   Якщо правильний варіант помітно довший за решту, питання вгадується
+   без знання теми. Це головна причина фальшивого відчуття готовності,
+   тож тримаємо поріг у проверялці. */
+
+const LEN_RATIO = 1.8;
+const lenSuspects = [];
+for (const [topicId, questions] of Object.entries(byTopic)) {
+  for (const q of questions) {
+    if (q.type !== 'single' || !Array.isArray(q.options)) continue;
+    const lens = q.options.map(o => String(o).length);
+    const right = lens[q.answer];
+    const others = lens.filter((_, i) => i !== q.answer);
+    if (!others.length) continue;
+    const avg = others.reduce((a, b) => a + b, 0) / others.length;
+    const ratio = right / avg;
+    if (ratio >= LEN_RATIO) lenSuspects.push({ topicId, id: q.id, ratio });
+  }
+}
+lenSuspects.sort((a, b) => b.ratio - a.ratio);
+if (lenSuspects.length) {
+  console.log(`
+правильний варіант задовгий (≥${LEN_RATIO}× за середній хибний): ${lenSuspects.length}`);
+  for (const s of lenSuspects.slice(0, 12)) {
+    console.log(`  ${s.ratio.toFixed(1)}×  ${s.id}  (${s.topicId})`);
+  }
+  if (lenSuspects.length > 12) console.log(`  …та ще ${lenSuspects.length - 12}`);
+}
 
 if (checkVideos && videos.length) {
   console.log('\nперевіряю відео…');

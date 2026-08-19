@@ -49,7 +49,10 @@
       "povist-q3",
       "povist-q4",
       "povist-q5",
-      "povist-q6"
+      "povist-q6",
+      "povist-q7",
+      "povist-q8",
+      "povist-q9"
     ],
     "slovo-o-polku": [
       "slovo-q1",
@@ -352,7 +355,10 @@
       "nashamova-q3",
       "nashamova-q4",
       "nashamova-q5",
-      "nashamova-q6"
+      "nashamova-q6",
+      "nashamova-q7",
+      "nashamova-q8",
+      "nashamova-q9"
     ],
     "tyutyunnyk-try-zozuli": [
       "zozuli-q1",
@@ -416,7 +422,10 @@
       "malanyuk-q3",
       "malanyuk-q4",
       "malanyuk-q5",
-      "malanyuk-q6"
+      "malanyuk-q6",
+      "malanyuk-q7",
+      "malanyuk-q8",
+      "malanyuk-q9"
     ],
     "suchasnyy-protses": [
       "suchasnyy-q1",

@@ -391,10 +391,10 @@ p:last-child{margin-bottom:0}
 
 .facts{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:8px}
 .facts li{
-  display:flex;gap:10px;background:var(--bg-elev);border:1px solid var(--line);
-  border-radius:var(--r-sm);padding:11px 13px;font-size:14.5px;
+  position:relative;background:var(--bg-elev);border:1px solid var(--line);
+  border-radius:var(--r-sm);padding:11px 13px 11px 31px;font-size:14.5px;
 }
-.facts li::before{content:"\25B8";color:var(--accent);font-weight:800;flex:none}
+.facts li::before{content:"\25B8";position:absolute;left:13px;top:11px;color:var(--accent);font-weight:800}
 .facts b{color:var(--text)}
 
 /* наведений текст у завданні */
