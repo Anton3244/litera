@@ -116,7 +116,32 @@ export const SECTIONS = [
     id: 'xx',
     title: 'Література ХХ ст.',
     cover: ART + 'cover-xx.webp',
-    topics: [],
+    topics: [
+      {
+        id: 'kotsyubynsky-tini', title: '«Тіні забутих предків»', author: 'Михайло Коцюбинський',
+        icon: '🏔', minutes: 14,
+      },
+      {
+        id: 'kotsyubynsky-intermezzo', title: '«Intermezzo»', author: 'Михайло Коцюбинський',
+        icon: '🌾', minutes: 11,
+      },
+      {
+        id: 'stefanyk-kaminnyy-khrest', title: '«Камінний хрест»', author: 'Василь Стефаник',
+        icon: '✝️', minutes: 11,
+      },
+      {
+        id: 'kobylyanska-valse', title: '«Valse mélancolique»', author: 'Ольга Кобилянська',
+        icon: '🎹', minutes: 12,
+      },
+      {
+        id: 'lesya-contra-spem-spero', title: '«Contra spem spero!»', author: 'Леся Українка',
+        icon: '🌸', minutes: 9,
+      },
+      {
+        id: 'lesya-lisova-pisnya', title: '«Лісова пісня»', author: 'Леся Українка',
+        icon: '🌲', minutes: 15,
+      },
+    ],
   },
   {
     id: 'emigranty',

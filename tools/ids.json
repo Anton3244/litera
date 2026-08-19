@@ -175,6 +175,56 @@
       "franko-q5",
       "franko-q6"
     ],
+    "kotsyubynsky-tini": [
+      "tini-q1",
+      "tini-q2",
+      "tini-q3",
+      "tini-q4",
+      "tini-q5",
+      "tini-q6",
+      "tini-q7"
+    ],
+    "kotsyubynsky-intermezzo": [
+      "intermezzo-q1",
+      "intermezzo-q2",
+      "intermezzo-q3",
+      "intermezzo-q4",
+      "intermezzo-q5",
+      "intermezzo-q6"
+    ],
+    "stefanyk-kaminnyy-khrest": [
+      "khrest-q1",
+      "khrest-q2",
+      "khrest-q3",
+      "khrest-q4",
+      "khrest-q5",
+      "khrest-q6"
+    ],
+    "kobylyanska-valse": [
+      "valse-q1",
+      "valse-q2",
+      "valse-q3",
+      "valse-q4",
+      "valse-q5",
+      "valse-q6"
+    ],
+    "lesya-contra-spem-spero": [
+      "contra-q1",
+      "contra-q2",
+      "contra-q3",
+      "contra-q4",
+      "contra-q5",
+      "contra-q6"
+    ],
+    "lesya-lisova-pisnya": [
+      "lisova-q1",
+      "lisova-q2",
+      "lisova-q3",
+      "lisova-q4",
+      "lisova-q5",
+      "lisova-q6",
+      "lisova-q7"
+    ],
     "rody-i-zhanry": [
       "rody-q1",
       "rody-q2",
