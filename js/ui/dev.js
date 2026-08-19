@@ -14,8 +14,49 @@ import { showWhatsNew } from './whatsnew.js';
 import { resetTopic } from '../updates.js';
 import { go, refreshStats } from '../app.js';
 import { toast, LETTERS, escapeHtml } from '../util.js';
+import { DEV_PASS_HASH } from '../config.js';
+
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+/** Замок від випадкового заходу. Один раз ввів — далі пускає без питань. */
+function lockScreen(root, onUnlocked) {
+  root.innerHTML = `
+    <div class="ob">
+      <div class="ob__art">🔒</div>
+      <h1 class="ob__title">Режим створювача</h1>
+      <p class="ob__text">Тут інструменти для налагодження. Потрібен пароль.</p>
+      <input class="ob__input" id="dev-pass" type="password" placeholder="Пароль" autocomplete="off">
+      <button class="btn btn--primary" id="dev-enter">Увійти</button>
+      <button class="btn btn--ghost" data-go="home">Назад</button>
+      <div class="ob__text" id="dev-err" style="text-align:center;margin:10px 0 0;color:var(--err)"></div>
+    </div>`;
+
+  const input = root.querySelector('#dev-pass');
+  input.focus();
+
+  async function tryEnter() {
+    if (await sha256(input.value) !== DEV_PASS_HASH) {
+      root.querySelector('#dev-err').textContent = 'Не той пароль';
+      input.value = '';
+      return;
+    }
+    store.set('dev_unlocked', '1');
+    onUnlocked();
+  }
+
+  root.querySelector('#dev-enter').addEventListener('click', tryEnter);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') tryEnter(); });
+}
 
 export async function renderDev(root) {
+  if (store.get('dev_unlocked') !== '1') {
+    lockScreen(root, () => renderDev(root));
+    return;
+  }
+
   const metas = allTopicMeta();
   const topics = await loadAllTopics();
   const picked = store.get('dev_topic') || metas[0].id;
@@ -80,8 +121,17 @@ export async function renderDev(root) {
       </div>
     </div>
 
-    <button class="btn btn--ghost" data-go="home">На головну</button>
+    <div class="btn-row">
+      <button class="btn btn--ghost" data-go="home">На головну</button>
+      <button class="btn btn--ghost" id="dev-lock">Замкнути</button>
+    </div>
   `;
+
+  root.querySelector('#dev-lock').addEventListener('click', () => {
+    store.set('dev_unlocked', '0');
+    toast('Замкнено');
+    renderDev(root);
+  });
 
   const contentBox = root.querySelector('#dev-content');
   const select = root.querySelector('#dev-topic');
