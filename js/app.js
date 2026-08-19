@@ -129,14 +129,19 @@ async function boot() {
     document.addEventListener('click', onGlobalClick);
     window.addEventListener('hashchange', route);
 
-    if (needsOnboarding()) {
+    // Режим створювача знайомства не потребує — пускаємо одразу до замка.
+    const wantsDev = location.hash.startsWith('#/dev');
+
+    if (needsOnboarding() && !wantsDev) {
       bootEl.remove();
       viewEl.hidden = false;
       viewEl.classList.add('view--full');
       await new Promise(resolve => renderOnboarding(viewEl, resolve));
       viewEl.classList.remove('view--full');
       topbar.hidden = false;
-      location.hash = '#/home';
+      // Адресу, з якою прийшли, не затираємо — інакше знайомство
+      // щоразу викидало б на головну замість потрібного екрана.
+      if (!location.hash || location.hash === '#/') location.hash = '#/home';
     }
 
     // Раз на добу — копія бази. Робиться до будь-яких змін, щоб було куди відкотитись.
