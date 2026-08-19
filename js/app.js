@@ -182,7 +182,33 @@ function onGlobalClick(e) {
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
   if (location.protocol === 'file:') return; // локально з файлу SW не працює
-  navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW:', err));
+
+  navigator.serviceWorker.register('sw.js')
+    .then(reg => {
+      // Раз на годину питаємо, чи не вийшла нова версія.
+      setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);
+    })
+    .catch(err => console.warn('SW:', err));
+
+  // Нова версія вже завантажилась і взяла керування, але сторінка досі
+  // виконує старий код. Без перезавантаження зміни просто не видно —
+  // тому пропонуємо його явно, а не мовчимо.
+  navigator.serviceWorker.addEventListener('controllerchange', showUpdateBar);
+}
+
+let updateBarShown = false;
+
+function showUpdateBar() {
+  if (updateBarShown) return;
+  updateBarShown = true;
+
+  const bar = document.createElement('div');
+  bar.className = 'updatebar';
+  bar.innerHTML = `
+    <span>Є нова версія застосунку</span>
+    <button class="btn btn--primary" id="do-update">Оновити</button>`;
+  document.body.appendChild(bar);
+  bar.querySelector('#do-update').addEventListener('click', () => location.reload());
 }
 
 export { toast };
