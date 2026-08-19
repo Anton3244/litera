@@ -66,6 +66,11 @@ export async function applyUpdates() {
   }
   store.set('hash_seeded', '1');
 
+  // Медаль за знайдені помилки — тим, хто вже займався до цього оновлення.
+  if (!firstRun && !store.get('award_bughunter')) {
+    store.set('award_bughunter', '1');
+  }
+
   // Новачкові нема чого показувати: для неї весь застосунок і так новий.
   if (firstRun) {
     markChangelogSeen();

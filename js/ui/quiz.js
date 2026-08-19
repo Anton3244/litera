@@ -60,7 +60,7 @@ function showResult(root, topic, results, ranOut) {
       ${fresh.length ? `<div class="card" style="text-align:left">
         <div class="row__label" style="margin-bottom:8px">Нові досягнення</div>
         ${fresh.map(a => `<div class="row" style="gap:14px">
-          <img class="award__img" src="${a.img}" alt="">
+          ${a.img ? `<img class="award__img" src="${a.img}" alt="">` : `<span class="award__emoji">${a.icon}</span>`}
           <div style="flex:1"><div class="row__label">${a.title}</div>
           <div class="row__hint">${a.hint}</div></div></div>`).join('')}
       </div>` : ''}

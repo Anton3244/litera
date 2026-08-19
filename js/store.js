@@ -469,7 +469,12 @@ export const AWARDS = [
   { code: 'xp-500', icon: '⭐', title: '500 XP', hint: 'Назбирати 500 XP' },
   { code: 'xp-2000', icon: '💎', title: '2000 XP', hint: 'Назбирати 2000 XP' },
   { code: 'reviewer', icon: '🧠', title: 'Повторення — мати', hint: '100 повторень у тренуванні' },
-].map(a => ({ ...a, img: `${AWARD_ART}${a.code}.webp` }));
+  {
+    code: 'bughunter', icon: '🔍', title: 'Мисливиця на баги',
+    hint: 'Знайшла те, чого не побачив жоден скрипт',
+    special: true,
+  },
+].map(a => ({ ...a, img: a.special ? null : `${AWARD_ART}${a.code}.webp` }));
 
 export function earnedAwards() {
   return Object.fromEntries(db.all('SELECT code, earned_at FROM awards').map(r => [r.code, r.earned_at]));
@@ -492,6 +497,8 @@ export function checkAwards(ctx = {}) {
     'xp-500': xp >= 500,
     'xp-2000': xp >= 2000,
     'reviewer': reviews >= 100,
+    // Вручається вручну — за знайдені помилки, а не за кількість відповідей.
+    'bughunter': get('award_bughunter') === '1',
   };
 
   const fresh = [];

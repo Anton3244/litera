@@ -143,7 +143,9 @@ function awardsHtml() {
   return `<div class="card">${store.AWARDS.map(a => {
     const has = !!earned[a.code];
     return `<div class="row" style="gap:14px">
-      <img class="award__img ${has ? '' : 'award__img--locked'}" src="${a.img}" alt="">
+      ${a.img
+        ? `<img class="award__img ${has ? '' : 'award__img--locked'}" src="${a.img}" alt="">`
+        : `<span class="award__emoji ${has ? '' : 'award__img--locked'}">${a.icon}</span>`}
       <div style="flex:1">
         <div class="row__label" style="${has ? '' : 'color:var(--text-dim)'}">${a.title}</div>
         <div class="row__hint">${a.hint}</div>
