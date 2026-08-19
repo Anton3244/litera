@@ -2,4 +2,5 @@ Thumbs.db
 .DS_Store
 *.sqlite
 assets/art/_source/
+assets/art/_new/
 programa-nmt.pdf

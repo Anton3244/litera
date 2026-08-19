@@ -20,19 +20,19 @@ export const SECTIONS = [
       },
       {
         id: 'pisni-marusi-churay', title: 'Пісні Марусі Чурай', author: '«Віють вітри», «Засвіт встали козаченьки»',
-        icon: '🎶', minutes: 9,
+        icon: '🎶', minutes: 9, cover: ART + 'cover-pisni-marusi-churay.webp',
       },
       {
         id: 'istorychni-pisni', title: 'Історичні пісні', author: '«Ой Морозе», «Чи не той то хміль»',
-        icon: '⚔️', minutes: 9,
+        icon: '⚔️', minutes: 9, cover: ART + 'cover-istorychni-pisni.webp',
       },
       {
         id: 'duma-marusya-bohuslavka', title: '«Дума про Марусю Богуславку»', author: 'Народна дума',
-        icon: '🪕', minutes: 10,
+        icon: '🪕', minutes: 10, cover: ART + 'cover-duma-marusya-bohuslavka.webp',
       },
       {
         id: 'balada-oy-letila-strila', title: '«Ой летіла стріла»', author: 'Народна балада',
-        icon: '🏹', minutes: 8,
+        icon: '🏹', minutes: 8, cover: ART + 'cover-balada-oy-letila-strila.webp',
       },
     ],
   },
@@ -42,7 +42,7 @@ export const SECTIONS = [
     topics: [
       {
         id: 'povist-mynulykh-lit', title: '«Повість минулих літ»', author: 'Нестор Літописець',
-        icon: '📜', minutes: 11,
+        icon: '📜', minutes: 11, cover: ART + 'cover-povist-mynulykh-lit.webp',
       },
       {
         id: 'slovo-o-polku', title: '«Слово про похід Ігорів»', author: 'Пам’ятка XII ст.',
@@ -50,7 +50,7 @@ export const SECTIONS = [
       },
       {
         id: 'skovoroda', title: 'Григорій Сковорода', author: 'Три твори з програми',
-        icon: '🐝', minutes: 12,
+        icon: '🐝', minutes: 12, cover: ART + 'cover-skovoroda.webp',
       },
     ],
   },
@@ -60,11 +60,11 @@ export const SECTIONS = [
     topics: [
       {
         id: 'kotlyarevsky-eneida', title: '«Енеїда»', author: 'Іван Котляревський',
-        icon: '⛵', minutes: 13,
+        icon: '⛵', minutes: 13, cover: ART + 'cover-kotlyarevsky-eneida.webp',
       },
       {
         id: 'kotlyarevsky-natalka', title: '«Наталка Полтавка»', author: 'Іван Котляревський',
-        icon: '🎭', minutes: 12,
+        icon: '🎭', minutes: 12, cover: ART + 'cover-kotlyarevsky-natalka.webp',
       },
       {
         id: 'shevchenko-kateryna', title: '«Катерина»', author: 'Тарас Шевченко',
@@ -72,43 +72,43 @@ export const SECTIONS = [
       },
       {
         id: 'shevchenko-zapovit', title: '«Заповіт»', author: 'Тарас Шевченко',
-        icon: '🕯️', minutes: 8,
+        icon: '🕯️', minutes: 8, cover: ART + 'cover-shevchenko-zapovit.webp',
       },
       {
         id: 'shevchenko-kavkaz', title: '«Кавказ»', author: 'Тарас Шевченко',
-        icon: '🏔️', minutes: 11,
+        icon: '🏔️', minutes: 11, cover: ART + 'cover-shevchenko-kavkaz.webp',
       },
       {
         id: 'shevchenko-son', title: '«Сон»', author: 'Тарас Шевченко',
-        icon: '💤', minutes: 12,
+        icon: '💤', minutes: 12, cover: ART + 'cover-shevchenko-son.webp',
       },
       {
         id: 'shevchenko-i-mertvym', title: '«І мертвим, і живим…»', author: 'Тарас Шевченко',
-        icon: '✉️', minutes: 11,
+        icon: '✉️', minutes: 11, cover: ART + 'cover-shevchenko-i-mertvym.webp',
       },
       {
         id: 'kulish-chorna-rada', title: '«Чорна рада»', author: 'Пантелеймон Куліш',
-        icon: '⚜️', minutes: 14,
+        icon: '⚜️', minutes: 14, cover: ART + 'cover-kulish-chorna-rada.webp',
       },
       {
         id: 'nechuy-kaydasheva-simya', title: '«Кайдашева сім’я»', author: 'Іван Нечуй-Левицький',
-        icon: '🍐', minutes: 13,
+        icon: '🍐', minutes: 13, cover: ART + 'cover-nechuy-kaydasheva-simya.webp',
       },
       {
         id: 'myrnyy-khiba-revut-voly', title: '«Хіба ревуть воли, як ясла повні?»', author: 'Панас Мирний',
-        icon: '🐂', minutes: 14,
+        icon: '🐂', minutes: 14, cover: ART + 'cover-myrnyy-khiba-revut-voly.webp',
       },
       {
         id: 'karpenko-karyy-martyn-borulya', title: '«Мартин Боруля»', author: 'Іван Карпенко-Карий',
-        icon: '📋', minutes: 12,
+        icon: '📋', minutes: 12, cover: ART + 'cover-karpenko-karyy-martyn-borulya.webp',
       },
       {
         id: 'franko-zakhar-berkut', title: '«Захар Беркут»', author: 'Іван Франко',
-        icon: '🦅', minutes: 13,
+        icon: '🦅', minutes: 13, cover: ART + 'cover-franko-zakhar-berkut.webp',
       },
       {
         id: 'franko-poeziya', title: 'Поезія Івана Франка', author: '«Зів’яле листя», «Мойсей»',
-        icon: '🍂', minutes: 12,
+        icon: '🍂', minutes: 12, cover: ART + 'cover-franko-poeziya.webp',
       },
     ],
   },

@@ -40,7 +40,7 @@ function showResult(root, topic, results, ranOut) {
 
   const ART = 'assets/art/';
   const mood = ranOut ? { art: 'result-hearts-out', title: 'Життя скінчились' }
-    : perfect ? { art: 'result-good', title: 'Ідеально!' }
+    : perfect ? { art: 'result-perfect', title: 'Ідеально!' }
       : score >= 0.8 ? { art: 'result-mid', title: 'Тема пройдена!' }
         : score >= 0.5 ? { art: 'result-mid', title: 'Уже краще' }
           : { art: 'result-low', title: 'Ще трохи попрацюємо' };

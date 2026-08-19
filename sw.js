@@ -1,14 +1,25 @@
 // Service worker: офлайн-режим і щоденне нагадування.
 // Піднімай CACHE_VERSION після зміни файлів — інакше браузер віддасть старі.
 
-const CACHE_VERSION = 'litera-v20';
+const CACHE_VERSION = 'litera-v21';
 
 const ART = [
-  'cover-slovo-o-polku', 'cover-shevchenko-kateryna', 'cover-rody-i-zhanry',
+  // обкладинки тем
   'cover-folklore', 'cover-xx', 'cover-suchasna',
+  'cover-pisni-marusi-churay', 'cover-istorychni-pisni',
+  'cover-duma-marusya-bohuslavka', 'cover-balada-oy-letila-strila',
+  'cover-povist-mynulykh-lit', 'cover-slovo-o-polku', 'cover-skovoroda',
+  'cover-kotlyarevsky-eneida', 'cover-kotlyarevsky-natalka',
+  'cover-shevchenko-kateryna', 'cover-shevchenko-zapovit', 'cover-shevchenko-kavkaz',
+  'cover-shevchenko-son', 'cover-shevchenko-i-mertvym',
+  'cover-kulish-chorna-rada', 'cover-nechuy-kaydasheva-simya',
+  'cover-myrnyy-khiba-revut-voly', 'cover-karpenko-karyy-martyn-borulya',
+  'cover-franko-zakhar-berkut', 'cover-franko-poeziya', 'cover-rody-i-zhanry',
+  // значки досягнень
   'award-first-lesson', 'award-perfect', 'award-streak-3', 'award-streak-7',
   'award-streak-30', 'award-xp-500', 'award-xp-2000', 'award-reviewer',
-  'result-good', 'result-mid', 'result-low', 'result-hearts-out',
+  // екрани результату й порожніх станів
+  'result-perfect', 'result-good', 'result-mid', 'result-low', 'result-hearts-out',
   'empty-practice', 'empty-error',
 ].map(n => `assets/art/${n}.webp`);
 
