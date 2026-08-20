@@ -140,6 +140,7 @@ export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, o
       <div class="fb" style="background:var(--bg)">
         <div class="fb__inner">
           <button class="btn btn--primary" id="check" ${ready ? '' : 'disabled'}>Перевірити</button>
+          <div class="kbdhint">Цифри <b>1–5</b> обирають відповідь, <b>Enter</b> перевіряє</div>
         </div>
       </div>`;
   }
@@ -171,6 +172,29 @@ export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, o
     if (e.target.closest('#check')) return check();
     if (e.target.closest('#next')) return advance();
   });
+
+  // На комп'ютері миша для тесту зайва: цифра обирає варіант, Enter перевіряє.
+  function onKey(e) {
+    // Якщо з тесту вийшли, не дочекавшись кінця, слухач знімає себе сам.
+    if (!wrap.isConnected) { document.removeEventListener('keydown', onKey); return; }
+    if (e.target instanceof Element && e.target.closest('input,textarea')) return;
+    const n = Number(e.key);
+    if (n >= 1 && n <= 9) {
+      if (locked) return;
+      const i = n - 1;
+      if (shown.type === 'match') {
+        if (i < shown.right.length) { e.preventDefault(); assign(i); }
+      } else if (i < shown.options.length) {
+        e.preventDefault(); pickOption(i);
+      }
+      return;
+    }
+    if (e.key === 'Enter' || e.key === ' ') {
+      const btn = wrap.querySelector('#next') || wrap.querySelector('#check:not([disabled])');
+      if (btn) { e.preventDefault(); btn.click(); }
+    }
+  }
+  document.addEventListener('keydown', onKey);
 
   function pickOption(i) {
     picked = i;
@@ -277,6 +301,7 @@ export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, o
   }
 
   function finish(ranOutOfHearts) {
+    document.removeEventListener('keydown', onKey);
     setHearts(null);
     onFinish(results, ranOutOfHearts);
   }

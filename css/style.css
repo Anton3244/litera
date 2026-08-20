@@ -22,6 +22,7 @@
 }
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none !important}
 html,body{height:100%}
 body{
   margin:0;background:var(--bg);color:var(--text);font-family:var(--font);
@@ -92,6 +93,7 @@ p:last-child{margin-bottom:0}
 .tab__icon{font-size:20px;filter:grayscale(1) opacity(.6)}
 .tab.is-active{color:var(--accent)}
 .tab.is-active .tab__icon{filter:none}
+.rail__brand,.tab--rail-only{display:none}
 
 /* ---------- cards ---------- */
 .card{
@@ -526,6 +528,8 @@ p:last-child{margin-bottom:0}
 .fb__text{font-size:14px;color:#d9d2e8;margin-bottom:14px;line-height:1.5}
 .fb__text b{color:#fff}
 .spacer-fb{height:170px}
+/* підказка про клавіші — тільки там, де є справжня клавіатура */
+.kbdhint{display:none}
 
 /* ---------- result ---------- */
 .result{text-align:center;padding-top:24px}
@@ -599,3 +603,97 @@ select,input[type=time],input[type=number]{
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;transition-duration:.01ms !important}
 }
+
+
+/* ===================== великий екран =====================
+   Телефон лишається як був. Тут нижня панель стає бічною,
+   а вивільнена ширина йде під зміст, а не під порожнечу. */
+
+@media (hover:hover) and (pointer:fine){
+  .kbdhint{
+    display:block;margin-top:10px;text-align:center;
+    font-size:12.5px;color:var(--text-faint);
+  }
+  .kbdhint b{color:var(--text-dim);font-weight:700}
+  .tab:hover{color:var(--text)}
+  .tab:hover .tab__icon{filter:none}
+  .opt:hover:not(.is-right):not(.is-wrong){border-color:var(--accent-2);background:var(--bg-elev-2)}
+  .is-locked .opt:hover{border-color:var(--line);background:var(--bg-elev)}
+  .btn:hover{filter:brightness(1.08)}
+  .topic:hover,.plan:hover,.tile:hover{border-color:var(--accent-2)}
+  .match__opt:hover:not(.is-used){border-color:var(--accent-2)}
+  .srcbox__link:hover{text-decoration:underline}
+  .topbar__back:hover,.topbar__settings:hover{background:var(--bg-elev-2);color:var(--text)}
+}
+
+@media (min-width:1000px){
+  :root{ --rail-w:232px; }
+
+  body{ padding-left:var(--rail-w); }
+
+  /* нижня панель → бічна колонка */
+  .tabbar{
+    top:0;bottom:0;left:0;right:auto;
+    width:var(--rail-w);height:auto;padding:18px 0 12px;
+    grid-template-columns:none;grid-auto-rows:max-content;align-content:start;gap:2px;
+    border-top:0;border-right:1px solid var(--line);
+    background:var(--bg-elev);backdrop-filter:none;
+  }
+  .rail__brand{
+    display:flex;align-items:center;gap:11px;
+    padding:0 18px 18px;margin-bottom:6px;
+    border-bottom:1px solid var(--line);
+  }
+  .rail__mark{
+    width:34px;height:34px;flex:none;border-radius:11px;
+    display:grid;place-content:center;
+    font-size:18px;font-weight:800;color:#1a1226;
+    background:linear-gradient(145deg,var(--accent),#ff8a3d);
+  }
+  .rail__name{font-size:17px;font-weight:800;letter-spacing:-.01em}
+
+  .tab,.tab--rail-only{
+    display:flex;flex-direction:row;align-items:center;justify-content:flex-start;
+    gap:12px;margin:0 10px;padding:11px 14px;
+    border-radius:12px;font-size:15px;font-weight:600;
+  }
+  .tab__icon{font-size:19px}
+  .tab.is-active{background:var(--bg-elev-2)}
+
+  /* На телефоні панель ховається на уроці, щоб не з'їдати екран.
+     Тут місця вистачає, тож колонка лишається — інакше збоку
+     зяяла б порожня смуга й нікуди було б перейти. */
+  .tabbar[hidden]{display:grid !important}
+
+  /* смуги, прибиті до низу вікна, мають починатися після колонки */
+  .fb,.updatebar{left:var(--rail-w)}
+  .updatebar{right:24px}
+
+  /* зміст: ширше, але не настільки, щоб рядок став нечитабельним */
+  .view{
+    max-width:760px;
+    padding:28px 32px calc(var(--safe-b) + 40px);
+  }
+  .fb__inner{max-width:760px}
+  .fb{padding:18px 32px calc(18px + var(--safe-b))}
+  .spacer-fb{height:150px}
+
+  .topbar{
+    height:auto;min-height:var(--topbar-h);padding:0 32px;
+    background:transparent;backdrop-filter:none;border-bottom:0;
+  }
+  .topbar__stats{justify-content:flex-end}
+
+  .page-title{font-size:32px}
+
+  /* теми в дві колонки — інакше список тягнеться на два екрани */
+  #all-topics{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
+  #all-topics .section-h{grid-column:1 / -1;margin-top:10px}
+  .dev__grid{grid-template-columns:repeat(4,1fr)}
+
+  .passage--verse{max-height:none}
+  .passage--prose{max-height:52vh}
+
+  .modal__card{max-width:520px}
+}
+
