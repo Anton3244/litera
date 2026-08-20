@@ -10,6 +10,8 @@
 import * as store from './store.js';
 import { kvPut } from './db.js';
 import { dayKey } from './util.js';
+import { serverUrl, syncCode } from './sync.js';
+import * as push from './push.js';
 
 const MIRROR_KEY = 'reminder';
 const SYNC_TAG = 'study-reminder';
@@ -29,6 +31,9 @@ export function syncMirror() {
     time: store.get('reminder_time'),
     lastStudyDay: lastStudyDay(),
     name: store.get('name'),
+    // щоб service worker міг сам забрати текст надісланого повідомлення
+    syncUrl: serverUrl(),
+    syncCode: syncCode(),
   }).catch(() => { /* не критично */ });
 }
 
@@ -50,14 +55,19 @@ export async function enableReminders(timeHHMM) {
   if (timeHHMM) store.set('reminder_time', timeHHMM);
   await syncMirror();
   await registerPeriodicSync();
+  // Другий канал: приходить, навіть коли застосунок закрито.
+  // Якщо не вийде (немає коду або браузер не вміє) — локальні нагадування
+  // все одно лишаються, тому помилку сюди не піднімаємо.
+  const p = await push.subscribe();
   schedule();
-  return { ok: true };
+  return { ok: true, push: p.ok, pushReason: p.ok ? null : p.reason };
 }
 
 export function disableReminders() {
   store.set('reminders_on', '0');
   clearTimeout(timer);
   syncMirror();
+  push.unsubscribe();
 }
 
 async function registerPeriodicSync() {

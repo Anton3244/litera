@@ -14,6 +14,7 @@ import { renderDev } from './ui/dev.js';
 import { initReminders } from './notify.js';
 import { needsOnboarding, renderOnboarding } from './ui/onboarding.js';
 import { autoSync } from './sync.js';
+import { drainInbox } from './push.js';
 import { applyUpdates } from './updates.js';
 import { showWhatsNew } from './ui/whatsnew.js';
 
@@ -157,6 +158,15 @@ async function boot() {
 
     // Догнати інший пристрій — тихо, у фоні. Якщо щось приїхало, оновлюємо екран.
     autoSync().then(res => { if (res?.added) route(); });
+
+    // Повідомлення, що чекали в черзі. Push міг не дійти — браузер не вміє,
+    // дозволу немає або пристрій був вимкнений довше, ніж живе push.
+    // Тоді покажемо їх просто в застосунку.
+    drainInbox().then(items => {
+      items.forEach((item, i) => {
+        setTimeout(() => toast(`${item.title ? item.title + ': ' : ''}${item.body}`, 6000), i * 800);
+      });
+    });
 
     bootEl.remove();
     topbar.hidden = false;

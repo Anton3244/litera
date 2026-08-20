@@ -1,7 +1,7 @@
 // Service worker: офлайн-режим і щоденне нагадування.
 // Піднімай CACHE_VERSION після зміни файлів — інакше браузер віддасть старі.
 
-const CACHE_VERSION = 'litera-v34';
+const CACHE_VERSION = 'litera-v35';
 
 const ART = [
   // обкладинки тем
@@ -35,7 +35,7 @@ const SHELL = [
   'js/db.js',
   'js/store.js',
   'js/util.js',
-  'js/notify.js',
+  'js/notify.js', 'js/push.js',
   'js/config.js',
   'js/updates.js',
   'js/ui/whatsnew.js',
@@ -174,6 +174,49 @@ self.addEventListener('periodicsync', event => {
       badge: 'assets/icon-192.png',
       tag: 'daily-study',
     });
+  })());
+});
+
+/**
+ * Push із сервера. Тіло навмисно порожнє — воно лише будить нас,
+ * а сам текст ми забираємо з черги на воркері. Так повідомлення
+ * не проходить через чужий push-сервіс.
+ *
+ * Показати сповіщення обов'язково: якщо промовчати, браузер сам
+ * покаже казенне «сайт оновлено у фоні».
+ */
+self.addEventListener('push', event => {
+  event.waitUntil((async () => {
+    let items = [];
+    try {
+      const state = await readMirror();
+      if (state?.syncUrl && state?.syncCode) {
+        const res = await fetch(`${state.syncUrl}/push/inbox/${state.syncCode}`, { cache: 'no-store' });
+        if (res.ok) items = (await res.json()).items || [];
+      }
+    } catch {
+      /* мережі може не бути — нижче покажемо загальне */
+    }
+
+    if (!items.length) {
+      await self.registration.showNotification('Літера', {
+        body: 'Загляни в застосунок 🔥',
+        icon: 'assets/icon-192.png',
+        badge: 'assets/icon-192.png',
+        tag: 'litera-push',
+      });
+      return;
+    }
+
+    for (const [i, item] of items.entries()) {
+      await self.registration.showNotification(item.title || 'Літера', {
+        body: item.body || '',
+        icon: 'assets/icon-192.png',
+        badge: 'assets/icon-192.png',
+        tag: 'litera-msg-' + i,
+        timestamp: item.at ? Date.parse(item.at) : Date.now(),
+      });
+    }
   })());
 });
 

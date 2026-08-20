@@ -14,7 +14,8 @@ import { showWhatsNew } from './whatsnew.js';
 import { resetTopic } from '../updates.js';
 import { go, refreshStats } from '../app.js';
 import { toast, LETTERS, escapeHtml } from '../util.js';
-import { DEV_PASS_HASH } from '../config.js';
+import { DEV_PASS_HASH, SYNC_URL } from '../config.js';
+import * as push from '../push.js';
 
 async function sha256(text) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
@@ -94,6 +95,38 @@ export async function renderDev(root) {
       <div id="dev-content"></div>
     </div>
 
+    <div class="section-h"><span class="section-h__title">Пристрої та повідомлення</span><span class="section-h__line"></span></div>
+    <div class="card">
+      <div class="row">
+        <div style="flex:1">
+          <div class="row__label">Адмінський токен</div>
+          <div class="row__hint">Зберігається лише на цьому пристрої. У застосунок не потрапляє.</div>
+        </div>
+      </div>
+      <input class="ob__input" id="adm-token" type="password" placeholder="токен воркера" autocomplete="off">
+      <div class="btn-row">
+        <button class="btn btn--ghost" id="adm-load">Показати коди</button>
+        <button class="btn btn--ghost" id="adm-forget">Забути токен</button>
+      </div>
+      <div id="adm-list" class="dev__note" style="margin-top:12px">—</div>
+      <div id="adm-self" class="dev__note" style="margin-top:10px">Перевіряю цей пристрій…</div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div style="flex:1">
+          <div class="row__label">Надіслати повідомлення</div>
+          <div class="row__hint">Прийде на її пристрій, навіть якщо застосунок закрито.
+          Якщо підписки ще немає — полежить у черзі до наступного заходу.</div>
+        </div>
+      </div>
+      <input class="ob__input" id="msg-code" placeholder="код одержувача" autocomplete="off">
+      <input class="ob__input" id="msg-title" placeholder="Заголовок" value="Літера">
+      <input class="ob__input" id="msg-body" placeholder="Текст повідомлення">
+      <button class="btn btn--primary" id="msg-send">Надіслати</button>
+      <div id="msg-out" class="dev__note" style="margin-top:10px"></div>
+    </div>
+
     <div class="section-h"><span class="section-h__title">Перевірки</span><span class="section-h__line"></span></div>
     <div class="card">
       <div class="row">
@@ -126,6 +159,105 @@ export async function renderDev(root) {
       <button class="btn btn--ghost" id="dev-lock">Замкнути</button>
     </div>
   `;
+
+  /* ---- пристрої та повідомлення ---- */
+
+  // Чи підписаний сам цей пристрій — найшвидший спосіб зрозуміти,
+  // працює ланцюжок узагалі чи ні.
+  (async () => {
+    const box = root.querySelector('#adm-self');
+    if (!box) return;
+    if (!push.supported()) { box.textContent = 'Цей браузер не вміє push-сповіщення'; return; }
+    const on = await push.isSubscribed();
+    box.textContent = on
+      ? 'Цей пристрій підписаний — повідомлення на його код дійдуть'
+      : 'Цей пристрій не підписаний. Увімкни нагадування в налаштуваннях.';
+  })();
+
+
+  const tokenInput = root.querySelector('#adm-token');
+  const admList = root.querySelector('#adm-list');
+  tokenInput.value = store.get('admin_token') || '';
+
+  const api = () => (store.get('sync_url') || SYNC_URL || '').replace(/\/+$/, '');
+
+  async function adminFetch(path, init = {}) {
+    const token = tokenInput.value.trim();
+    if (!token) throw new Error('Спершу введи токен');
+    store.set('admin_token', token);
+    const res = await fetch(api() + path, {
+      ...init,
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': token, ...(init.headers || {}) },
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 403) throw new Error('Токен не підійшов');
+    if (!res.ok) throw new Error(data.error || `Помилка ${res.status}`);
+    return data;
+  }
+
+  const when = iso => {
+    if (!iso) return 'ніколи';
+    const d = new Date(iso);
+    if (Number.isNaN(+d)) return '—';
+    const days = Math.floor((Date.now() - d) / 86400000);
+    if (days === 0) return 'сьогодні';
+    if (days === 1) return 'учора';
+    return `${days} дн. тому`;
+  };
+
+  root.querySelector('#adm-load').addEventListener('click', async () => {
+    admList.textContent = 'Читаю…';
+    try {
+      const { codes } = await adminFetch('/admin/codes');
+      if (!codes.length) { admList.textContent = 'Жодного коду ще немає'; return; }
+      admList.innerHTML = codes.map(c => `
+        <div class="dev__q" style="cursor:pointer" data-code="${c.code}">
+          <div class="dev__qhead">${escapeHtml(c.name || 'без імені')}
+            <span class="dev__id">${c.code}</span></div>
+          <div class="dev__explain">
+            ${c.xp ?? 0} XP · ${c.answers ?? 0} відповідей ·
+            остання ${when(c.lastAnswerAt)} ·
+            пристроїв: ${c.devices} ${c.pending ? `· у черзі: ${c.pending}` : ''}
+          </div>
+        </div>`).join('');
+      for (const el of admList.querySelectorAll('[data-code]')) {
+        el.addEventListener('click', () => {
+          root.querySelector('#msg-code').value = el.dataset.code;
+          toast('Код підставлено');
+        });
+      }
+    } catch (e) {
+      admList.textContent = e.message;
+    }
+  });
+
+  root.querySelector('#adm-forget').addEventListener('click', () => {
+    store.set('admin_token', '');
+    tokenInput.value = '';
+    admList.textContent = '—';
+    toast('Токен стерто');
+  });
+
+  const msgOut = root.querySelector('#msg-out');
+  root.querySelector('#msg-send').addEventListener('click', async () => {
+    const code = root.querySelector('#msg-code').value.trim();
+    const title = root.querySelector('#msg-title').value.trim() || 'Літера';
+    const body = root.querySelector('#msg-body').value.trim();
+    if (!code || !body) { msgOut.textContent = 'Потрібні код і текст'; return; }
+    msgOut.textContent = 'Надсилаю…';
+    try {
+      const r = await adminFetch('/admin/send', {
+        method: 'POST',
+        body: JSON.stringify({ code, title, body }),
+      });
+      msgOut.textContent = r.delivered
+        ? `Доставлено на ${r.delivered} пристр.`
+        : (r.note || 'Покладено в чергу');
+      root.querySelector('#msg-body').value = '';
+    } catch (e) {
+      msgOut.textContent = e.message;
+    }
+  });
 
   root.querySelector('#dev-lock').addEventListener('click', () => {
     store.set('dev_unlocked', '0');
