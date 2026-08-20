@@ -61,7 +61,8 @@
       "slovo-q4",
       "slovo-q5",
       "slovo-q6",
-      "slovo-q7"
+      "slovo-q7",
+      "slovo-q8"
     ],
     "skovoroda": [
       "skovoroda-q1",
@@ -87,7 +88,8 @@
       "natalka-q3",
       "natalka-q4",
       "natalka-q5",
-      "natalka-q6"
+      "natalka-q6",
+      "natalka-q7"
     ],
     "shevchenko-kateryna": [
       "kateryna-q1",
@@ -209,7 +211,9 @@
       "valse-q3",
       "valse-q4",
       "valse-q5",
-      "valse-q6"
+      "valse-q6",
+      "valse-q7",
+      "valse-q8"
     ],
     "lesya-contra-spem-spero": [
       "contra-q1",
@@ -339,7 +343,8 @@
       "modry-q3",
       "modry-q4",
       "modry-q5",
-      "modry-q6"
+      "modry-q6",
+      "modry-q7"
     ],
     "symonenko-poeziya": [
       "symonenko-q1",
@@ -414,7 +419,8 @@
       "tyhrolovy-q3",
       "tyhrolovy-q4",
       "tyhrolovy-q5",
-      "tyhrolovy-q6"
+      "tyhrolovy-q6",
+      "tyhrolovy-q7"
     ],
     "malanyuk-uryvok-z-poemy": [
       "malanyuk-q1",
