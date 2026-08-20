@@ -251,20 +251,53 @@ export async function renderDev(root) {
     try {
       const { codes } = await adminFetch('/admin/codes');
       if (!codes.length) { admList.textContent = 'Жодного коду ще немає'; return; }
-      admList.innerHTML = codes.map(c => `
-        <div class="dev__q" style="cursor:pointer" data-code="${c.code}">
-          <div class="dev__qhead">${escapeHtml(c.name || 'без імені')}
-            <span class="dev__id">${c.code}</span></div>
-          <div class="dev__explain">
-            ${c.xp ?? 0} XP · ${c.answers ?? 0} відповідей ·
-            остання ${when(c.lastAnswerAt)} ·
-            пристроїв: ${c.devices} ${c.pending ? `· у черзі: ${c.pending}` : ''}
+      // Порожні коди — сміття від спроб налаштування, тримаємо їх окремо внизу.
+      const used = codes.filter(c => c.answers > 0 || c.devices > 0);
+      const empty = codes.filter(c => !(c.answers > 0 || c.devices > 0));
+
+      const row = c => `
+        <div class="dev__q" data-code="${c.code}">
+          <div class="dev__qhead">
+            <span data-pick style="cursor:pointer">${escapeHtml(c.name || 'без імені')}</span>
+            <span class="dev__id">${c.code}</span>
           </div>
-        </div>`).join('');
-      for (const el of admList.querySelectorAll('[data-code]')) {
+          <div class="dev__explain">
+            ${c.xp ?? 0} XP ·
+            ${c.answers ?? 0} відповідей${c.answers ? ` (${c.correct} правильних)` : ''} ·
+            днів занять: ${c.days ?? 0} ·
+            тем: ${c.topicsDone ?? 0} з ${c.topicsStarted ?? 0} завершено<br>
+            остання відповідь ${when(c.lastAnswerAt)} ·
+            збережено ${when(c.savedAt)} ·
+            пристроїв: ${c.devices}${c.pending ? ` · у черзі: ${c.pending}` : ''}
+            <button class="btn btn--ghost" data-del="${c.code}"
+              style="width:auto;padding:4px 10px;font-size:12px;margin-left:8px">стерти</button>
+          </div>
+        </div>`;
+
+      admList.innerHTML =
+        (used.length ? used.map(row).join('') : '<div>Жодного коду із заняттями</div>') +
+        (empty.length
+          ? `<div style="margin-top:14px;color:var(--text-faint)">Порожні (${empty.length}) — сміття від налаштування:</div>`
+            + empty.map(row).join('')
+          : '');
+
+      for (const el of admList.querySelectorAll('[data-pick]')) {
         el.addEventListener('click', () => {
-          root.querySelector('#msg-code').value = el.dataset.code;
+          root.querySelector('#msg-code').value = el.closest('[data-code]').dataset.code;
           toast('Код підставлено');
+        });
+      }
+      for (const el of admList.querySelectorAll('[data-del]')) {
+        el.addEventListener('click', async () => {
+          const code = el.dataset.del;
+          if (!confirm(`Стерти код ${code}? Прогрес під ним зникне з сервера назавжди.`)) return;
+          try {
+            await adminFetch('/admin/code/' + code, { method: 'DELETE' });
+            toast('Стерто ' + code);
+            root.querySelector('#adm-load').click();
+          } catch (e) {
+            toast(e.message, 4000);
+          }
         });
       }
     } catch (e) {

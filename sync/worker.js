@@ -21,6 +21,7 @@
  *
  *   GET    /admin/codes        → список кодів зі зведенням     (X-Admin-Token)
  *   POST   /admin/send         → надіслати повідомлення на код (X-Admin-Token)
+ *   DELETE /admin/code/<код>   → стерти код разом із підписками     (X-Admin-Token)
  *
  * Адмінський токен НЕ лежить у репозиторії й не потрапляє в застосунок:
  * він зберігається як секрет воркера, а на пристрої адміна його вводять
@@ -111,17 +112,34 @@ const codeFrom = path => {
   return m ? m[1].toUpperCase() : null;
 };
 
+/**
+ * Зведення для адмінського списку.
+ *
+ * Формат тіла заданий у js/sync.js і не схожий на звичайний обʼєкт:
+ * settings — це масив пар {key, value}, а XP лежить по днях, не в корені.
+ */
 function summarise(raw) {
   try {
     const d = JSON.parse(raw);
     const answers = Array.isArray(d.answers) ? d.answers : [];
-    const last = answers.length ? answers[answers.length - 1] : null;
+    const days = Array.isArray(d.days) ? d.days : [];
+    const topics = Array.isArray(d.topic_progress) ? d.topic_progress : [];
+    const settings = Array.isArray(d.settings) ? d.settings : [];
+
+    const setting = k => settings.find(s => s.key === k)?.value ?? null;
+    const lastAnswer = answers.reduce(
+      (max, a) => (a.created_at > max ? a.created_at : max), '');
+
     return {
-      name: d.settings?.name ?? d.name ?? null,
-      xp: d.xp ?? null,
+      name: setting('name'),
+      xp: days.reduce((sum, x) => sum + (Number(x.xp) || 0), 0),
       answers: answers.length,
-      lastAnswerAt: last ? (last.at || last.ts || null) : null,
-      savedAt: d.savedAt || null,
+      correct: answers.filter(a => a.correct).length,
+      days: days.length,
+      topicsDone: topics.filter(t => t.completed_at).length,
+      topicsStarted: topics.length,
+      lastAnswerAt: lastAnswer || null,
+      savedAt: d.updated_at || null,
       bytes: raw.length,
     };
   } catch {
@@ -231,6 +249,18 @@ export default {
       }
       out.sort((a, b) => String(b.lastAnswerAt || '').localeCompare(String(a.lastAnswerAt || '')));
       return json({ codes: out });
+    }
+
+    if (path.startsWith('/admin/code/') && method === 'DELETE') {
+      if (!adminOk(request, env)) return json({ error: 'forbidden' }, 403);
+      const code = codeFrom(path);
+      if (!code) return json({ error: 'bad code' }, 400);
+      await Promise.all([
+        env.LITERA.delete('sync:' + code),
+        env.LITERA.delete('subs:' + code),
+        env.LITERA.delete('inbox:' + code),
+      ]);
+      return json({ ok: true, deleted: code });
     }
 
     if (path === '/admin/send' && method === 'POST') {
