@@ -447,7 +447,8 @@
       "rody-q3",
       "rody-q4",
       "rody-q5",
-      "rody-q6"
+      "rody-q6",
+      "rody-q7"
     ],
     "teoriya-virshuvannya": [
       "virsh-q1",
@@ -455,7 +456,8 @@
       "virsh-q3",
       "virsh-q4",
       "virsh-q5",
-      "virsh-q6"
+      "virsh-q6",
+      "virsh-q7"
     ],
     "teoriya-tropy": [
       "tropy-q1",
@@ -464,7 +466,9 @@
       "tropy-q4",
       "tropy-q5",
       "tropy-q6",
-      "tropy-q7"
+      "tropy-q7",
+      "tropy-q8",
+      "tropy-q9"
     ],
     "teoriya-napryamy": [
       "napryamy-q1",
