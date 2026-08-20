@@ -2,6 +2,7 @@
 // списку з двадцяти двох тем одразу.
 
 import * as store from '../store.js';
+import { mascotHtml } from './mascot.js';
 import { enableReminders } from '../notify.js';
 import * as sync from '../sync.js';
 import { $ } from '../util.js';
@@ -39,7 +40,7 @@ export function renderOnboarding(root, onDone) {
 
   function welcome() {
     return `
-      <div class="ob__art">📖</div>
+      <div class="ob__art">${mascotHtml('hello', { size: 128, className: 'mascot--pop' })}</div>
       <h1 class="ob__title">Привіт!</h1>
       <p class="ob__text">
         Це застосунок для підготовки до НМТ з української літератури.
@@ -56,7 +57,7 @@ export function renderOnboarding(root, onDone) {
   /** Вхід замість реєстрації: код — це і є обліковий запис, тільки без пароля. */
   function account() {
     return `
-      <div class="ob__art">🔑</div>
+      <div class="ob__art">${mascotHtml('encourage', { size: 128, className: 'mascot--pop' })}</div>
       <h1 class="ob__title">Ти тут уперше?</h1>
       <p class="ob__text">
         Якщо ти вже займалась на іншому пристрої, введи свій код —
@@ -118,7 +119,7 @@ export function renderOnboarding(root, onDone) {
 
   function name() {
     return `
-      <div class="ob__art">✏️</div>
+      <div class="ob__art">${mascotHtml('read', { size: 128, className: 'mascot--pop' })}</div>
       <h1 class="ob__title">Як до тебе звертатись?</h1>
       <p class="ob__text">Щоб нагадування були не від безликого застосунку.</p>
       <input id="ob-name" class="ob__input" type="text" placeholder="Ім’я" maxlength="24" autocomplete="off">
@@ -135,7 +136,7 @@ export function renderOnboarding(root, onDone) {
   function goal() {
     const cur = store.getNum('daily_goal_xp');
     return `
-      <div class="ob__art">🎯</div>
+      <div class="ob__art">${mascotHtml('fire', { size: 128, className: 'mascot--pop' })}</div>
       <h1 class="ob__title">Скільки часу на день?</h1>
       <p class="ob__text">
         Краще мало, але щодня. Пізніше це можна змінити в налаштуваннях.
@@ -160,7 +161,7 @@ export function renderOnboarding(root, onDone) {
 
   function reminder() {
     return `
-      <div class="ob__art">🔔</div>
+      <div class="ob__art">${mascotHtml('bye', { size: 128, className: 'mascot--pop' })}</div>
       <h1 class="ob__title">Нагадувати щодня?</h1>
       <p class="ob__text">
         Якщо за день не було жодного заняття, застосунок нагадає —
@@ -182,7 +183,7 @@ export function renderOnboarding(root, onDone) {
     const who = store.get('name');
     if (!store.get('sync_code')) store.set('sync_code', sync.makeCode(8));
     return `
-      <div class="ob__art">🔥</div>
+      <div class="ob__art">${mascotHtml('happy', { size: 128, className: 'mascot--pop' })}</div>
       <h1 class="ob__title">${who ? `Готово, ${who}!` : 'Готово!'}</h1>
       <p class="ob__text">Як це працює далі — три пункти:</p>
       <ol class="ob__list">

@@ -6,6 +6,7 @@ import { loadTopic } from '../../content/index.js';
 import { runQuiz } from './quiz-engine.js';
 import { go, refreshStats } from '../app.js';
 import { shuffle, toast } from '../util.js';
+import { mascotHtml, moodForResult } from './mascot.js';
 
 export async function renderQuiz(root, [topicId]) {
   const topic = await loadTopic(topicId);
@@ -38,16 +39,16 @@ function showResult(root, topic, results, ranOut) {
   refreshStats();
   db.dailyBackup();   // тепер у базі точно є що берегти
 
-  const ART = 'assets/art/';
-  const mood = ranOut ? { art: 'result-hearts-out', title: 'Життя скінчились' }
-    : perfect ? { art: 'result-perfect', title: 'Ідеально!' }
-      : score >= 0.8 ? { art: 'result-mid', title: 'Тема пройдена!' }
-        : score >= 0.5 ? { art: 'result-mid', title: 'Уже краще' }
-          : { art: 'result-low', title: 'Ще трохи попрацюємо' };
+  const mood = ranOut ? { title: 'Життя скінчились' }
+    : perfect ? { title: 'Ідеально!' }
+      : score >= 0.8 ? { title: 'Тема пройдена!' }
+        : score >= 0.5 ? { title: 'Уже краще' }
+          : { title: 'Ще трохи попрацюємо' };
 
   root.innerHTML = `
     <div class="result">
-      <img class="result__art" src="${ART}${mood.art}.webp" alt="">
+      ${mascotHtml(moodForResult({ perfect, ranOut, score }),
+        { size: 132, motion: 'bob', className: 'mascot--pop result__art' })}
       <h1 class="result__title">${mood.title}</h1>
       <p class="result__sub">${topic.title}</p>
 

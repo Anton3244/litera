@@ -1,7 +1,7 @@
 // Service worker: офлайн-режим і щоденне нагадування.
 // Піднімай CACHE_VERSION після зміни файлів — інакше браузер віддасть старі.
 
-const CACHE_VERSION = 'litera-v37';
+const CACHE_VERSION = 'litera-v39';
 
 const ART = [
   // обкладинки тем
@@ -21,6 +21,9 @@ const ART = [
   // екрани результату й порожніх станів
   'result-perfect', 'result-good', 'result-mid', 'result-low', 'result-hearts-out',
   'empty-practice', 'empty-error',
+  // лелека — по одній позі на настрій
+  'mascot-hello', 'mascot-happy', 'mascot-encourage', 'mascot-bye', 'mascot-read',
+  'mascot-fire', 'mascot-crown', 'mascot-sleep', 'mascot-sad',
 ].map(n => `assets/art/${n}.webp`);
 
 const SHELL = [
@@ -44,7 +47,7 @@ const SHELL = [
   'js/ui/home.js',
   'js/ui/lesson.js',
   'js/ui/quiz.js',
-  'js/ui/quiz-engine.js',
+  'js/ui/quiz-engine.js', 'js/ui/mascot.js',
   'js/ui/practice.js',
   'js/ui/stats.js',
   'js/ui/settings.js',

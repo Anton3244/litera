@@ -6,6 +6,7 @@ import { SECTIONS, loadAllTopics } from '../../content/index.js';
 import { ringSvg, plural, clamp, WEEKDAYS } from '../util.js';
 import { go } from '../app.js';
 import { maybeShowHint } from './onboarding.js';
+import { mascotHtml, moodForHome } from './mascot.js';
 
 export async function renderHome(root) {
   const topics = await loadAllTopics();
@@ -23,7 +24,13 @@ export async function renderHome(root) {
 
   root.innerHTML = `
     <div class="hello">
-      <div>
+      ${mascotHtml(moodForHome({
+        allDone: plan.allDone,
+        streak: st,
+        studiedToday: todayXp > 0,
+        maxLevel: lvl.index === 6,
+      }), { size: 64 })}
+      <div style="flex:1;min-width:0">
         <div class="hello__hi ${store.hasGoldFrame() ? 'is-gold' : ''}">${name ? `Привіт, ${name}` : 'Сьогодні'}</div>
         <div class="hello__sub">${todayXp} з ${goal} XP · 🔥 ${st} ${plural(st, 'день', 'дні', 'днів')}${store.freezeUsed() ? ' · ❄️' : ''}</div>
       </div>
@@ -118,7 +125,8 @@ function why(key) {
 function enoughHtml() {
   return `
     <div class="enough">
-      <div class="enough__title">💛 На сьогодні досить</div>
+      ${mascotHtml('happy', { size: 84, motion: 'bob', className: 'mascot--pop' })}
+      <div class="enough__title">На сьогодні досить</div>
       <div class="enough__text">
         Повторення зроблено, нову тему пройдено, ціль набрана.
         Далі вчити можна, але вже без потреби — пам’ять краще працює,
