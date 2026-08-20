@@ -1,7 +1,7 @@
 // Service worker: офлайн-режим і щоденне нагадування.
 // Піднімай CACHE_VERSION після зміни файлів — інакше браузер віддасть старі.
 
-const CACHE_VERSION = 'litera-v35';
+const CACHE_VERSION = 'litera-v36';
 
 const ART = [
   // обкладинки тем

@@ -105,6 +105,7 @@ export async function renderDev(root) {
       </div>
       <input class="ob__input" id="adm-token" type="password" placeholder="токен воркера" autocomplete="off">
       <div class="btn-row">
+        <button class="btn btn--ghost" id="adm-check">Перевірити зв’язок</button>
         <button class="btn btn--ghost" id="adm-load">Показати коди</button>
         <button class="btn btn--ghost" id="adm-forget">Забути токен</button>
       </div>
@@ -204,6 +205,46 @@ export async function renderDev(root) {
     if (days === 1) return 'учора';
     return `${days} дн. тому`;
   };
+
+  // Каже прямим текстом, на якому кроці все стало: воркер не оновлений,
+  // секрети не додані чи токен не той. Інакше видно лише «Failed to fetch».
+  root.querySelector('#adm-check').addEventListener('click', async () => {
+    admList.textContent = 'Перевіряю…';
+    const lines = [];
+    const base = api();
+    lines.push(`Сервер: ${base || '(не вказано)'}`);
+
+    try {
+      const r = await fetch(base + '/push/key', { cache: 'no-store' });
+      if (r.status === 404) {
+        lines.push('✗ Воркер ще СТАРИЙ: він не знає про push. Онови код воркера в Cloudflare.');
+      } else if (r.status === 503) {
+        lines.push('✗ Воркер оновлено, але не додані секрети VAPID_PUBLIC / VAPID_PRIVATE.');
+      } else if (r.ok) {
+        lines.push('✓ Push налаштований, ключ віддається.');
+      } else {
+        lines.push(`✗ /push/key відповів ${r.status}`);
+      }
+    } catch (e) {
+      lines.push('✗ Сервер не відповідає взагалі: ' + e.message);
+    }
+
+    const token = tokenInput.value.trim();
+    if (!token) {
+      lines.push('— Токен не введено, тому список кодів не перевіряв.');
+    } else {
+      try {
+        const r = await fetch(base + '/admin/codes', { headers: { 'X-Admin-Token': token } });
+        if (r.status === 403) lines.push('✗ Токен не підійшов (або секрет ADMIN_TOKEN не доданий).');
+        else if (r.status === 404) lines.push('✗ Воркер старий — /admin/codes ще немає.');
+        else if (r.ok) lines.push('✓ Токен приймається, список доступний.');
+        else lines.push(`✗ /admin/codes відповів ${r.status}`);
+      } catch (e) {
+        lines.push('✗ Не достукався до /admin/codes: ' + e.message);
+      }
+    }
+    admList.innerHTML = lines.map(l => `<div>${escapeHtml(l)}</div>`).join('');
+  });
 
   root.querySelector('#adm-load').addEventListener('click', async () => {
     admList.textContent = 'Читаю…';
