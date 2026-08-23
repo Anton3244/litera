@@ -60,17 +60,5 @@ export function vibrate(pattern) {
   if (navigator.vibrate) { try { navigator.vibrate(pattern); } catch { /* ignore */ } }
 }
 
-/** Кільцевий індикатор прогресу (0..1) як inline SVG. */
-export function ringSvg(pct, size = 60, stroke = 6) {
-  const r = (size - stroke) / 2;
-  const c = 2 * Math.PI * r;
-  const off = c * (1 - clamp(pct, 0, 1));
-  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-    <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="var(--bg-elev-2)" stroke-width="${stroke}"/>
-    <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="var(--accent)" stroke-width="${stroke}"
-      stroke-linecap="round" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/>
-  </svg>`;
-}
-
 export const LETTERS = ['А', 'Б', 'В', 'Г', 'Д', 'Е'];
 export const WEEKDAYS = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'нд'];

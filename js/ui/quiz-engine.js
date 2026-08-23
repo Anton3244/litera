@@ -3,6 +3,7 @@
 
 import * as store from '../store.js';
 import { LETTERS, shuffle, vibrate, escapeHtml } from '../util.js';
+import { verdictSvg, xpBurstSvg } from './icons.js';
 import { bumpStat, refreshStats, setHearts } from '../app.js';
 
 
@@ -67,6 +68,10 @@ export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, o
 
     bar.style.width = `${(index / questions.length) * 100}%`;
     host.innerHTML = shown.type === 'match' ? matchHtml(shown) : singleHtml(shown);
+    // Перезапуск анімації: без зняття класу вона не програється вдруге.
+    host.classList.remove('q-enter');
+    void host.offsetWidth;
+    host.classList.add('q-enter');
     fbHost.innerHTML = checkBarHtml(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -150,7 +155,10 @@ export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, o
     return `
       <div class="fb ${ok ? 'fb--ok' : 'fb--err'}">
         <div class="fb__inner">
-          <div class="fb__head">${ok ? '✓ Правильно!' : '✗ Не зовсім'}</div>
+          <div class="fb__head">
+            <span class="fb__verdict">${verdictSvg(ok, 30)}</span>
+            ${ok ? 'Правильно!' : 'Не зовсім'}
+          </div>
           <div class="fb__text">${q.explain ? escapeHtml(q.explain) : (ok ? 'Так тримати.' : 'Подивись пояснення в теорії.')}</div>
           <button class="btn ${ok ? 'btn--ok' : 'btn--err'}" id="next">${last ? 'Завершити' : 'Далі'}</button>
         </div>
@@ -288,6 +296,23 @@ export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, o
     refreshStats();
 
     fbHost.innerHTML = feedbackHtml(ok, q);
+    // Тільки тепер: сплеск міряє висоту панелі, а вона щойно змінилась.
+    if (ok) showXpBurst();
+  }
+
+  /** Сплеск XP злітає над панеллю відповіді й прибирає себе сам. */
+  function showXpBurst() {
+    const el = document.createElement('div');
+    el.className = 'xpburst';
+    el.innerHTML = xpBurstSvg(store.XP_CORRECT, 110);
+    // Висота панелі залежить від довжини пояснення, тож відштовхуємось
+    // від неї, а не від сталого відступу знизу. Беремо offsetHeight, а не
+    // getBoundingClientRect: панель саме виїжджає знизу, і поки триває
+    // анімація її справжній край ще за межами екрана.
+    const bar = fbHost.querySelector('.fb');
+    if (bar) el.style.bottom = `${bar.offsetHeight + 10}px`;
+    wrap.appendChild(el);
+    setTimeout(() => el.remove(), 1400);
   }
 
   function advance() {

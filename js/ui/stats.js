@@ -1,6 +1,7 @@
 // Екран прогресу: графік XP, точність, час, стан по темах.
 
 import * as store from '../store.js';
+import { levelBadge, perkIcon } from './badges.js';
 import * as db from '../db.js';
 import { loadAllTopics } from '../../content/index.js';
 import { plural, WEEKDAYS } from '../util.js';
@@ -81,8 +82,9 @@ function levelsHtml() {
   const lvl = store.levelInfo();
   return `
     <div class="card">
-      <div class="row__label" style="margin-bottom:4px">
-        ${lvl.icon} Рівень ${lvl.number} — ${lvl.title}
+      <div class="lvl__head">
+        ${levelBadge(lvl.index, { size: 52 })}
+        <span class="row__label">Рівень ${lvl.number} — ${lvl.title}</span>
       </div>
       <div class="row__hint" style="margin-bottom:10px">
         ${lvl.next ? `${lvl.xp} XP · до «${lvl.next.title}» лишилось ${lvl.toNext}` : `${lvl.xp} XP · вище нікуди`}
@@ -92,7 +94,7 @@ function levelsHtml() {
     const open = i <= lvl.index;
     if (!l.perk) return '';
     return `<div class="perk ${open ? 'is-open' : ''}">
-          <span class="perk__icon">${open ? l.icon : '🔒'}</span>
+          <span class="perk__icon">${perkIcon(i, { locked: !open })}</span>
           <span class="perk__body">
             <span class="perk__title">${l.perk}</span>
             <span class="perk__hint">Рівень ${i + 1} · ${l.title} · ${l.xp} XP</span>

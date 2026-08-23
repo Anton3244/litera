@@ -67,7 +67,7 @@ p:last-child{margin-bottom:0}
 .stat--streak{color:var(--accent)}
 .stat--xp{color:#ffe27a}
 .stat--hearts{color:#ffd166}
-.stat__icon{font-size:14px}
+.stat__icon{font-size:14px;display:inline-flex;align-items:center}
 .stat.is-bump{animation:bump .45s ease}
 @keyframes bump{0%{transform:scale(1)}35%{transform:scale(1.28)}100%{transform:scale(1)}}
 
@@ -136,7 +136,7 @@ p:last-child{margin-bottom:0}
   background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--r-md);
   padding:12px 14px;margin-bottom:14px;
 }
-.lvl__icon{font-size:24px;flex:none}
+.lvl__icon{flex:none;display:grid;place-content:center}
 .lvl__body{flex:1;min-width:0}
 .lvl__top{display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:6px}
 .lvl__top b{font-weight:800}
@@ -150,14 +150,14 @@ p:last-child{margin-bottom:0}
   padding:18px;margin-bottom:16px;text-align:center;
   animation:pop .5s cubic-bezier(.2,1.4,.4,1);
 }
-.lvlup__icon{font-size:44px;line-height:1;margin-bottom:8px}
+.lvlup__icon{line-height:1;margin-bottom:8px;display:flex;justify-content:center}
 .lvlup__title{font-size:19px;font-weight:800;margin-bottom:6px}
 .lvlup__perk{color:var(--accent);font-weight:700;font-size:14.5px;margin-bottom:6px}
 .lvlup__hint{color:var(--text-faint);font-size:12.5px}
 
-.perk{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);opacity:.45}
+.perk{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
 .perk:last-child{border-bottom:0}
-.perk.is-open{opacity:1}
+.perk:not(.is-open) .perk__title{color:var(--text-dim)}
 .perk__icon{font-size:20px;flex:none;width:26px;text-align:center}
 .perk__body{flex:1;min-width:0}
 .perk__title{display:block;font-size:14px;font-weight:600;line-height:1.35}
@@ -716,3 +716,80 @@ select,input[type=time],input[type=number]{
   .modal__card{max-width:520px}
 }
 
+
+
+/* ===================== векторна графіка =====================
+   Іконки, значки й оздоблення з js/ui/icons.js, badges.js, ornaments.js.
+   Малюнок живе в SVG, тут — лише розміри й розкладка. */
+
+/* вогник у рядку тексту: підганяємо під висоту літер, а не під рядок */
+.inline-ico{display:inline-flex;vertical-align:-2px}
+.inline-ico svg{display:block}
+.ico{display:block}
+
+/* вогники тижня */
+.day__dot svg{display:block}
+.day.is-lit .day__dot svg path{fill:rgba(48,20,2,.75)}
+
+/* значки рівнів і привілеїв */
+.badge{display:block;flex:none}
+.badge--dim{opacity:.4;filter:grayscale(1)}
+.lvl__head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.perk__icon{flex:none;width:34px;height:34px;display:grid;place-content:center}
+
+/* заголовок розділу з кольоровою плямою */
+.section-h--art{position:relative}
+.section-h__blob{
+  position:absolute;left:2px;top:50%;transform:translateY(-50%);
+  width:74px;height:74px;pointer-events:none;z-index:0;
+  filter:blur(14px);opacity:.4;
+}
+.section-h--art .section-h__title,
+.section-h--art .section-h__line{position:relative;z-index:1}
+
+/* витинанка між секціями */
+.vytynanka{display:flex;align-items:center;gap:14px;margin:22px 0 6px}
+.vytynanka__line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line))}
+.vytynanka__line:last-child{background:linear-gradient(90deg,var(--line),transparent)}
+.vytynanka__art{flex:none;display:block}
+
+/* буквиця */
+.dropcap{float:left;margin:2px 12px 4px 0;shape-outside:margin-box}
+
+/* галочка/хрестик у панелі відповіді */
+.fb__verdict{display:inline-flex;flex:none}
+.fb__verdict svg{display:block}
+
+/* сплеск XP: злітає над панеллю й гасне; кліки крізь нього проходять */
+.xpburst{
+  position:fixed;left:50%;bottom:calc(var(--safe-b) + 132px);
+  transform:translateX(-50%);z-index:40;pointer-events:none;
+  animation:xpFloat 1.4s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes xpFloat{
+  0%{opacity:0;transform:translate(-50%,14px) scale(.7)}
+  18%{opacity:1;transform:translate(-50%,0) scale(1)}
+  70%{opacity:1;transform:translate(-50%,-26px) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-52px) scale(.94)}
+}
+
+/* конфеті на екрані ідеального результату */
+.result__confetti{
+  position:absolute;left:50%;top:0;transform:translateX(-50%);
+  pointer-events:none;z-index:2;
+}
+.result{position:relative}
+
+/* поява питання: короткий зсув, щоб було видно, що аркуш перегорнули */
+.q-enter{animation:qEnter .32s cubic-bezier(.22,1,.36,1) both}
+@keyframes qEnter{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .xpburst,.result__confetti{display:none}
+}
+
+/* цитата з буквицею: очищаємо обтікання, щоб наступний блок не наїхав */
+.quote--cap::after{content:"";display:block;clear:both}

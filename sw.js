@@ -1,7 +1,7 @@
 // Service worker: офлайн-режим і щоденне нагадування.
 // Піднімай CACHE_VERSION після зміни файлів — інакше браузер віддасть старі.
 
-const CACHE_VERSION = 'litera-v41';
+const CACHE_VERSION = 'litera-v42';
 
 const ART = [
   'award-first-lesson', 'award-perfect', 'award-reviewer', 'award-streak-3', 'award-streak-30',
@@ -52,6 +52,7 @@ const SHELL = [
   'js/ui/lesson.js',
   'js/ui/quiz.js',
   'js/ui/quiz-engine.js', 'js/ui/mascot.js',
+  'js/ui/icons.js', 'js/ui/badges.js', 'js/ui/ornaments.js',
   'js/ui/practice.js',
   'js/ui/stats.js',
   'js/ui/settings.js',

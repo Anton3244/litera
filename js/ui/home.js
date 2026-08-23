@@ -3,7 +3,10 @@
 
 import * as store from '../store.js';
 import { SECTIONS, loadAllTopics } from '../../content/index.js';
-import { ringSvg, plural, clamp, WEEKDAYS } from '../util.js';
+import { plural, clamp, WEEKDAYS } from '../util.js';
+import { ringSvg, flameSvg } from './icons.js';
+import { levelBadge } from './badges.js';
+import { sectionBlob, divider } from './ornaments.js';
 import { go } from '../app.js';
 import { maybeShowHint } from './onboarding.js';
 import { mascotHtml, moodForHome } from './mascot.js';
@@ -32,7 +35,7 @@ export async function renderHome(root) {
       }), { size: 64 })}
       <div style="flex:1;min-width:0">
         <div class="hello__hi ${store.hasGoldFrame() ? 'is-gold' : ''}">${name ? `Привіт, ${name}` : 'Сьогодні'}</div>
-        <div class="hello__sub">${todayXp} з ${goal} XP · 🔥 ${st} ${plural(st, 'день', 'дні', 'днів')}${store.freezeUsed() ? ' · ❄️' : ''}</div>
+        <div class="hello__sub">${todayXp} з ${goal} XP · <span class="inline-ico">${flameSvg(15, st > 0)}</span> ${st} ${plural(st, 'день', 'дні', 'днів')}${store.freezeUsed() ? ' · ❄️' : ''}</div>
       </div>
       <div class="hello__ring">
         ${ringSvg(clamp(todayXp / goal, 0, 1), 46, 5)}
@@ -45,6 +48,8 @@ export async function renderHome(root) {
 
     <div class="card plan">${plan.tasks.map(taskHtml).join('')}</div>
 
+    ${divider(0)}
+
     <div class="card">
       <div class="row__label">Тиждень</div>
       <div class="week">${weekHtml()}</div>
@@ -54,7 +59,7 @@ export async function renderHome(root) {
 
     <button class="btn btn--ghost" id="show-all">Усі теми (${topics.length})</button>
     <div id="all-topics" hidden>
-      ${SECTIONS.map(s => sectionHtml(s, byId)).join('')}
+      ${SECTIONS.map((s, i) => sectionHtml(s, byId, i)).join('')}
     </div>
   `;
 
@@ -77,7 +82,7 @@ export async function renderHome(root) {
 function levelHtml(lvl) {
   return `
     <button class="lvl" data-go="stats">
-      <span class="lvl__icon">${lvl.icon}</span>
+      <span class="lvl__icon">${levelBadge(lvl.index, { size: 40 })}</span>
       <span class="lvl__body">
         <span class="lvl__top">
           <b>Рівень ${lvl.number} · ${lvl.title}</b>
@@ -91,7 +96,7 @@ function levelHtml(lvl) {
 function levelUpHtml(fresh, lvl) {
   return `
     <div class="lvlup">
-      <div class="lvlup__icon">${fresh.icon}</div>
+      <div class="lvlup__icon">${levelBadge(lvl.index, { size: 72 })}</div>
       <div class="lvlup__title">Новий рівень: ${fresh.title}</div>
       ${fresh.perk ? `<div class="lvlup__perk">Відкрито: ${fresh.perk}</div>` : ''}
       <div class="lvlup__hint">Усі привілеї — у розділі «Прогрес»</div>
@@ -167,14 +172,15 @@ function upNextHtml(plan, byId) {
 function weekHtml() {
   return store.weekFlames().map((d, i) => `
     <div class="day ${d.lit ? 'is-lit' : ''} ${d.isToday ? 'is-today' : ''}">
-      <div class="day__dot">${d.lit ? '🔥' : ''}</div>
+      <div class="day__dot">${d.lit ? flameSvg(16, true) : ''}</div>
       <div class="day__label">${WEEKDAYS[i]}</div>
     </div>`).join('');
 }
 
-function sectionHtml(section, byId) {
+function sectionHtml(section, byId, i = 0) {
   const head = `
-    <div class="section-h">
+    <div class="section-h section-h--art">
+      <span class="section-h__blob">${sectionBlob(i, 72)}</span>
       <span class="section-h__title">${section.title}</span>
       <span class="section-h__line"></span>
     </div>`;

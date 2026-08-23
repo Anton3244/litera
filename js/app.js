@@ -9,6 +9,7 @@ import { renderLesson } from './ui/lesson.js';
 import { renderQuiz } from './ui/quiz.js';
 import { renderPractice, renderPracticeRun } from './ui/practice.js';
 import { renderStats } from './ui/stats.js';
+import { flameSvg, starSvg, heartSvg } from './ui/icons.js';
 import { renderSettings } from './ui/settings.js';
 import { renderDev } from './ui/dev.js';
 import { initReminders } from './notify.js';
@@ -86,8 +87,21 @@ function applyChrome(entry) {
 /* ---------------- верхня панель ---------------- */
 
 export function refreshStats() {
-  $('#stat-streak').textContent = store.streak();
+  const st = store.streak();
+  $('#stat-streak').textContent = st;
   $('#stat-xp').textContent = store.totalXp();
+  // Вогник перемальовуємо лише коли серія справді загорілась або згасла:
+  // інакше SMIL-анімація перезапускалась би після кожної відповіді.
+  const ico = $('#ico-streak');
+  const alive = String(st > 0);
+  if (ico && ico.dataset.alive !== alive) {
+    ico.innerHTML = flameSvg(17, st > 0);
+    ico.dataset.alive = alive;
+  }
+  const starEl = $('#ico-xp');
+  if (starEl && !starEl.firstChild) starEl.innerHTML = starSvg(17);
+  const heartEl = $('#ico-hearts');
+  if (heartEl && !heartEl.firstChild) heartEl.innerHTML = heartSvg(17, true);
 }
 
 export function bumpStat(which) {

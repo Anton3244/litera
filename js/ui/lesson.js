@@ -4,6 +4,7 @@ import * as store from '../store.js';
 import { loadTopic } from '../../content/index.js';
 import { go } from '../app.js';
 import { vibrate } from '../util.js';
+import { divider, dropCap } from './ornaments.js';
 
 export async function renderLesson(root, [topicId]) {
   const topic = await loadTopic(topicId);
@@ -36,7 +37,10 @@ export async function renderLesson(root, [topicId]) {
         <h2 class="slide__title">${s.title}</h2>
         <div class="slide__body">${s.html}</div>
         ${(s.videos ?? (s.video ? [s.video] : [])).map(videoHtml).join('')}
+        ${last ? divider(1) : ''}
       </article>`;
+
+    decorateQuotes(host);
 
     bar.style.width = `${((i + 1) / topic.slides.length) * 100}%`;
     prevBtn.disabled = i === 0;
@@ -74,6 +78,33 @@ export async function renderLesson(root, [topicId]) {
   });
 
   draw();
+}
+
+/**
+ * Перша літера першої цитати на слайді стає буквицею.
+ *
+ * Працюємо по DOM, а не по рядку: у цитаті трапляються <b> та <em>,
+ * і різати розмітку регулярним виразом означало б рано чи пізно її зламати.
+ * Чіпаємо лише той випадок, коли цитата починається звичайним текстом.
+ */
+function decorateQuotes(host) {
+  const q = host.querySelector('.quote');
+  if (!q || q.querySelector('.dropcap')) return;
+
+  const node = q.firstChild;
+  if (!node || node.nodeType !== Node.TEXT_NODE) return;
+
+  const text = node.nodeValue;
+  const at = text.search(/\S/);
+  if (at < 0) return;
+  const ch = text[at];
+  if (!/[А-ЯЄІЇҐа-яєіїґA-Za-z]/.test(ch)) return;
+
+  node.nodeValue = text.slice(at + 1);
+  const cap = document.createElement('span');
+  cap.innerHTML = dropCap(ch);
+  q.insertBefore(cap.firstElementChild, node);
+  q.classList.add('quote--cap');
 }
 
 /**

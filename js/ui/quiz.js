@@ -7,6 +7,8 @@ import { runQuiz } from './quiz-engine.js';
 import { go, refreshStats } from '../app.js';
 import { shuffle, toast } from '../util.js';
 import { mascotHtml, moodForResult } from './mascot.js';
+import { confettiSvg } from './icons.js';
+import { divider } from './ornaments.js';
 
 export async function renderQuiz(root, [topicId]) {
   const topic = await loadTopic(topicId);
@@ -47,6 +49,7 @@ function showResult(root, topic, results, ranOut) {
 
   root.innerHTML = `
     <div class="result">
+      ${perfect ? `<div class="result__confetti">${confettiSvg(320)}</div>` : ''}
       ${mascotHtml(moodForResult({ perfect, ranOut, score }),
         { size: 132, motion: 'bob', className: 'mascot--pop result__art' })}
       <h1 class="result__title">${mood.title}</h1>
@@ -67,6 +70,8 @@ function showResult(root, topic, results, ranOut) {
       </div>` : ''}
 
       ${score < 0.8 && !ranOut ? `<p class="page-sub">Щоб тема зарахувалась, треба ${'≥'} 80%.</p>` : ''}
+
+      ${divider(2)}
 
       <div style="display:grid;gap:10px;margin-top:8px">
         <button class="btn btn--primary" data-again>Пройти ще раз</button>
