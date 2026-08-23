@@ -39,6 +39,7 @@ export const SECTIONS = [
   },
   {
     id: 'davnya',
+    cover: ART + 'cover-davnya.webp',
     title: 'Давня українська література',
     topics: [
       {
@@ -57,6 +58,7 @@ export const SECTIONS = [
   },
   {
     id: 'nova',
+    cover: ART + 'cover-nova.webp',
     title: 'Література кінця XVIII — початку XX ст.',
     topics: [
       {
@@ -120,129 +122,130 @@ export const SECTIONS = [
     topics: [
       {
         id: 'kotsyubynsky-tini', title: '«Тіні забутих предків»', author: 'Михайло Коцюбинський',
-        icon: '🏔', minutes: 14,
+        icon: '🏔', minutes: 14, cover: ART + 'cover-kotsyubynsky-tini.webp',
       },
       {
         id: 'kotsyubynsky-intermezzo', title: '«Intermezzo»', author: 'Михайло Коцюбинський',
-        icon: '🌾', minutes: 11,
+        icon: '🌾', minutes: 11, cover: ART + 'cover-kotsyubynsky-intermezzo.webp',
       },
       {
         id: 'stefanyk-kaminnyy-khrest', title: '«Камінний хрест»', author: 'Василь Стефаник',
-        icon: '✝️', minutes: 11,
+        icon: '✝️', minutes: 11, cover: ART + 'cover-stefanyk-kaminnyy-khrest.webp',
       },
       {
         id: 'kobylyanska-valse', title: '«Valse mélancolique»', author: 'Ольга Кобилянська',
-        icon: '🎹', minutes: 12,
+        icon: '🎹', minutes: 12, cover: ART + 'cover-kobylyanska-valse.webp',
       },
       {
         id: 'lesya-contra-spem-spero', title: '«Contra spem spero!»', author: 'Леся Українка',
-        icon: '🌸', minutes: 9,
+        icon: '🌸', minutes: 9, cover: ART + 'cover-lesya-contra-spem-spero.webp',
       },
       {
         id: 'lesya-lisova-pisnya', title: '«Лісова пісня»', author: 'Леся Українка',
-        icon: '🌲', minutes: 15,
+        icon: '🌲', minutes: 15, cover: ART + 'cover-lesya-lisova-pisnya.webp',
       },
       {
         id: 'voronyy-blakytna-panna', title: '«Блакитна Панна»', author: 'Микола Вороний',
-        icon: '💙', minutes: 9,
+        icon: '💙', minutes: 9, cover: ART + 'cover-voronyy-blakytna-panna.webp',
       },
       {
         id: 'oles-poeziya', title: 'Поезія Олександра Олеся', author: '«Чари ночі», «О слово рідне!»',
-        icon: '🌙', minutes: 11,
+        icon: '🌙', minutes: 11, cover: ART + 'cover-oles-poeziya.webp',
       },
       {
         id: 'tychyna-poeziya', title: 'Поезія Павла Тичини', author: 'Три вірші з програми',
-        icon: '🎺', minutes: 13,
+        icon: '🎺', minutes: 13, cover: ART + 'cover-tychyna-poeziya.webp',
       },
       {
         id: 'rylsky-u-tepli-dni', title: '«У теплі дні збирання винограду…»', author: 'Максим Рильський',
-        icon: '🍇', minutes: 10,
+        icon: '🍇', minutes: 10, cover: ART + 'cover-rylsky-u-tepli-dni.webp',
       },
       {
         id: 'khvylovyy-ya-romantyka', title: '«Я (Романтика)»', author: 'Микола Хвильовий',
-        icon: '🔥', minutes: 13,
+        icon: '🔥', minutes: 13, cover: ART + 'cover-khvylovyy-ya-romantyka.webp',
       },
       {
         id: 'yanovsky-mayster-korablya', title: '«Майстер корабля»', author: 'Юрій Яновський',
-        icon: '⛵', minutes: 12,
+        icon: '⛵', minutes: 12, cover: ART + 'cover-yanovsky-mayster-korablya.webp',
       },
       {
         id: 'pidmohylnyy-misto', title: '«Місто»', author: 'Валер’ян Підмогильний',
-        icon: '🏙', minutes: 13,
+        icon: '🏙', minutes: 13, cover: ART + 'cover-pidmohylnyy-misto.webp',
       },
       {
         id: 'vyshnya-usmishky', title: 'Усмішки Остапа Вишні', author: '«Моя автобіографія», «Сом»',
-        icon: '🎣', minutes: 11,
+        icon: '🎣', minutes: 11, cover: ART + 'cover-vyshnya-usmishky.webp',
       },
       {
         id: 'kulish-myna-mazaylo', title: '«Мина Мазайло»', author: 'Микола Куліш',
-        icon: '🎭', minutes: 13,
+        icon: '🎭', minutes: 13, cover: ART + 'cover-kulish-myna-mazaylo.webp',
       },
       {
         id: 'antonych-rizdvo', title: '«Різдво»', author: 'Богдан-Ігор Антонич',
-        icon: '❄️', minutes: 9,
+        icon: '❄️', minutes: 9, cover: ART + 'cover-antonych-rizdvo.webp',
       },
       {
         id: 'sosyura-lyubit-ukrainu', title: '«Любіть Україну!»', author: 'Володимир Сосюра',
-        icon: '🌻', minutes: 9,
+        icon: '🌻', minutes: 9, cover: ART + 'cover-sosyura-lyubit-ukrainu.webp',
       },
       {
         id: 'dovzhenko-zacharovana-desna', title: '«Зачарована Десна»', author: 'Олександр Довженко',
-        icon: '🏞', minutes: 13,
+        icon: '🏞', minutes: 13, cover: ART + 'cover-dovzhenko-zacharovana-desna.webp',
       },
       {
         id: 'malyshko-pisnya-pro-rushnyk', title: '«Пісня про рушник»', author: 'Андрій Малишко',
-        icon: '🧵', minutes: 9,
+        icon: '🧵', minutes: 9, cover: ART + 'cover-malyshko-pisnya-pro-rushnyk.webp',
       },
       {
         id: 'honchar-modry-kamen', title: '«Модри Камень»', author: 'Олесь Гончар',
-        icon: '🏔', minutes: 10,
+        icon: '🏔', minutes: 10, cover: ART + 'cover-honchar-modry-kamen.webp',
       },
       {
         id: 'symonenko-poeziya', title: 'Поезія Василя Симоненка', author: 'Три вірші з програми',
-        icon: '🦢', minutes: 12,
+        icon: '🦢', minutes: 12, cover: ART + 'cover-symonenko-poeziya.webp',
       },
       {
         id: 'holoborodko-nasha-mova', title: '«Наша мова»', author: 'Василь Голобородько',
-        icon: '🗣', minutes: 9,
+        icon: '🗣', minutes: 9, cover: ART + 'cover-holoborodko-nasha-mova.webp',
       },
       {
         id: 'tyutyunnyk-try-zozuli', title: '«Три зозулі з поклоном»', author: 'Григір Тютюнник',
-        icon: '🕊', minutes: 11,
+        icon: '🕊', minutes: 11, cover: ART + 'cover-tyutyunnyk-try-zozuli.webp',
       },
       {
         id: 'stus-hospody', title: '«Господи, гніву пречистого…»', author: 'Василь Стус',
-        icon: '⛓', minutes: 10,
+        icon: '⛓', minutes: 10, cover: ART + 'cover-stus-hospody.webp',
       },
       {
         id: 'drach-balada-pro-sonyashnyk', title: '«Балада про соняшник»', author: 'Іван Драч',
-        icon: '🌞', minutes: 10,
+        icon: '🌞', minutes: 10, cover: ART + 'cover-drach-balada-pro-sonyashnyk.webp',
       },
       {
         id: 'pavlychko-dva-kolory', title: '«Два кольори»', author: 'Дмитро Павличко',
-        icon: '🧶', minutes: 9,
+        icon: '🧶', minutes: 9, cover: ART + 'cover-pavlychko-dva-kolory.webp',
       },
       {
         id: 'kostenko-strashni-slova', title: '«Страшні слова, коли вони мовчать»', author: 'Ліна Костенко',
-        icon: '✒️', minutes: 10,
+        icon: '✒️', minutes: 10, cover: ART + 'cover-kostenko-strashni-slova.webp',
       },
       {
         id: 'kostenko-marusya-churay', title: '«Маруся Чурай»', author: 'Ліна Костенко',
-        icon: '🎼', minutes: 15,
+        icon: '🎼', minutes: 15, cover: ART + 'cover-kostenko-marusya-churay.webp',
       },
     ],
   },
   {
     id: 'emigranty',
+    cover: ART + 'cover-emigranty.webp',
     title: 'Письменники-емігранти',
     topics: [
       {
         id: 'bahryanyy-tyhrolovy', title: '«Тигролови»', author: 'Іван Багряний',
-        icon: '🐅', minutes: 14,
+        icon: '🐅', minutes: 14, cover: ART + 'cover-bahryanyy-tyhrolovy.webp',
       },
       {
         id: 'malanyuk-uryvok-z-poemy', title: '«Уривок з поеми»', author: 'Євген Маланюк',
-        icon: '🗡', minutes: 10,
+        icon: '🗡', minutes: 10, cover: ART + 'cover-malanyuk-uryvok-z-poemy.webp',
       },
     ],
   },
@@ -253,12 +256,13 @@ export const SECTIONS = [
     topics: [
       {
         id: 'suchasnyy-protses', title: 'Сучасний літературний процес', author: 'Постмодернізм і його автори',
-        icon: '🌀', minutes: 11,
+        icon: '🌀', minutes: 11, cover: ART + 'cover-suchasnyy-protses.webp',
       },
     ],
   },
   {
     id: 'teoriya',
+    cover: ART + 'cover-teoriya.webp',
     title: 'Теорія літератури',
     topics: [
       {
@@ -267,41 +271,42 @@ export const SECTIONS = [
       },
       {
         id: 'teoriya-virshuvannya', title: 'Віршування', author: 'Розмір, рима, строфа',
-        icon: '📐', minutes: 12,
+        icon: '📐', minutes: 12, cover: ART + 'cover-teoriya-virshuvannya.webp',
       },
       {
         id: 'teoriya-tropy', title: 'Художні засоби', author: 'Тропи й стилістичні фігури',
-        icon: '🎨', minutes: 13,
+        icon: '🎨', minutes: 13, cover: ART + 'cover-teoriya-tropy.webp',
       },
       {
         id: 'teoriya-napryamy', title: 'Літературні напрями', author: 'Від бароко до постмодернізму',
-        icon: '🧭', minutes: 13,
+        icon: '🧭', minutes: 13, cover: ART + 'cover-teoriya-napryamy.webp',
       },
     ],
   },
   {
     id: 'rozbir',
+    cover: ART + 'cover-rozbir.webp',
     title: 'Аналіз незнайомого тексту',
     topics: [
       {
         id: 'cluster-yak-rozbyraty', title: 'Як розбирати незнайомий текст', author: 'Завдання 16–25',
-        icon: '🧩', minutes: 10,
+        icon: '🧩', minutes: 10, cover: ART + 'cover-cluster-yak-rozbyraty.webp',
       },
       {
         id: 'cluster-lesya-vesna', title: 'Вірш І: «Стояла я і слухала весну…»', author: 'Леся Українка',
-        icon: '🌱', minutes: 8,
+        icon: '🌱', minutes: 8, cover: ART + 'cover-cluster-lesya-vesna.webp',
       },
       {
         id: 'cluster-franko-zernya', title: 'Вірш ІІ: «Ой ти, дівчино, з горіха зерня…»', author: 'Іван Франко',
-        icon: '🌰', minutes: 8,
+        icon: '🌰', minutes: 8, cover: ART + 'cover-cluster-franko-zernya.webp',
       },
       {
         id: 'cluster-stefanyk-novyna', title: 'Проза І: «Новина»', author: 'Василь Стефаник',
-        icon: '🪨', minutes: 9,
+        icon: '🪨', minutes: 9, cover: ART + 'cover-cluster-stefanyk-novyna.webp',
       },
       {
         id: 'cluster-kotsyubynsky-tsvit', title: 'Проза ІІ: «Цвіт яблуні»', author: 'Михайло Коцюбинський',
-        icon: '🌸', minutes: 9,
+        icon: '🌸', minutes: 9, cover: ART + 'cover-cluster-kotsyubynsky-tsvit.webp',
       },
     ],
   },

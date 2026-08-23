@@ -1,29 +1,33 @@
 // Service worker: офлайн-режим і щоденне нагадування.
 // Піднімай CACHE_VERSION після зміни файлів — інакше браузер віддасть старі.
 
-const CACHE_VERSION = 'litera-v40';
+const CACHE_VERSION = 'litera-v41';
 
 const ART = [
-  // обкладинки тем
-  'cover-folklore', 'cover-xx', 'cover-suchasna',
-  'cover-pisni-marusi-churay', 'cover-istorychni-pisni',
-  'cover-duma-marusya-bohuslavka', 'cover-balada-oy-letila-strila',
-  'cover-povist-mynulykh-lit', 'cover-slovo-o-polku', 'cover-skovoroda',
-  'cover-kotlyarevsky-eneida', 'cover-kotlyarevsky-natalka',
-  'cover-shevchenko-kateryna', 'cover-shevchenko-zapovit', 'cover-shevchenko-kavkaz',
-  'cover-shevchenko-son', 'cover-shevchenko-i-mertvym',
-  'cover-kulish-chorna-rada', 'cover-nechuy-kaydasheva-simya',
-  'cover-myrnyy-khiba-revut-voly', 'cover-karpenko-karyy-martyn-borulya',
-  'cover-franko-zakhar-berkut', 'cover-franko-poeziya', 'cover-rody-i-zhanry',
-  // значки досягнень
-  'award-first-lesson', 'award-perfect', 'award-streak-3', 'award-streak-7',
-  'award-streak-30', 'award-xp-500', 'award-xp-2000', 'award-reviewer',
-  // екрани результату й порожніх станів
-  'result-perfect', 'result-good', 'result-mid', 'result-low', 'result-hearts-out',
-  'empty-practice', 'empty-error',
-  // лелека — по одній позі на настрій
-  'mascot-hello', 'mascot-happy', 'mascot-encourage', 'mascot-bye', 'mascot-read',
-  'mascot-fire', 'mascot-crown', 'mascot-sleep', 'mascot-sad',
+  'award-first-lesson', 'award-perfect', 'award-reviewer', 'award-streak-3', 'award-streak-30',
+  'award-streak-7', 'award-xp-2000', 'award-xp-500', 'cover-antonych-rizdvo', 'cover-bahryanyy-tyhrolovy',
+  'cover-balada-oy-letila-strila', 'cover-cluster-franko-zernya', 'cover-cluster-kotsyubynsky-tsvit',
+  'cover-cluster-lesya-vesna', 'cover-cluster-stefanyk-novyna', 'cover-cluster-yak-rozbyraty',
+  'cover-davnya', 'cover-dovzhenko-zacharovana-desna', 'cover-drach-balada-pro-sonyashnyk',
+  'cover-duma-marusya-bohuslavka', 'cover-emigranty', 'cover-folklore', 'cover-franko-poeziya',
+  'cover-franko-zakhar-berkut', 'cover-holoborodko-nasha-mova', 'cover-honchar-modry-kamen',
+  'cover-istorychni-pisni', 'cover-karpenko-karyy-martyn-borulya', 'cover-khvylovyy-ya-romantyka',
+  'cover-kobylyanska-valse', 'cover-kostenko-marusya-churay', 'cover-kostenko-strashni-slova',
+  'cover-kotlyarevsky-eneida', 'cover-kotlyarevsky-natalka', 'cover-kotsyubynsky-intermezzo',
+  'cover-kotsyubynsky-tini', 'cover-kulish-chorna-rada', 'cover-kulish-myna-mazaylo', 'cover-lesya-contra-spem-spero',
+  'cover-lesya-lisova-pisnya', 'cover-malanyuk-uryvok-z-poemy', 'cover-malyshko-pisnya-pro-rushnyk',
+  'cover-myrnyy-khiba-revut-voly', 'cover-nechuy-kaydasheva-simya', 'cover-nova', 'cover-oles-poeziya',
+  'cover-pavlychko-dva-kolory', 'cover-pidmohylnyy-misto', 'cover-pisni-marusi-churay', 'cover-povist-mynulykh-lit',
+  'cover-rody-i-zhanry', 'cover-rozbir', 'cover-rylsky-u-tepli-dni', 'cover-shevchenko-i-mertvym',
+  'cover-shevchenko-kateryna', 'cover-shevchenko-kavkaz', 'cover-shevchenko-son', 'cover-shevchenko-zapovit',
+  'cover-skovoroda', 'cover-slovo-o-polku', 'cover-sosyura-lyubit-ukrainu', 'cover-stefanyk-kaminnyy-khrest',
+  'cover-stus-hospody', 'cover-suchasna', 'cover-suchasnyy-protses', 'cover-symonenko-poeziya',
+  'cover-teoriya', 'cover-teoriya-napryamy', 'cover-teoriya-tropy', 'cover-teoriya-virshuvannya',
+  'cover-tychyna-poeziya', 'cover-tyutyunnyk-try-zozuli', 'cover-voronyy-blakytna-panna',
+  'cover-vyshnya-usmishky', 'cover-xx', 'cover-yanovsky-mayster-korablya', 'empty-error',
+  'empty-practice', 'mascot-bye', 'mascot-crown', 'mascot-encourage', 'mascot-fire', 'mascot-happy',
+  'mascot-hello', 'mascot-read', 'mascot-sad', 'mascot-sleep', 'state-goal-done', 'state-offline',
+  'state-stats-empty', 'state-streak-3', 'state-streak-30', 'state-streak-7',
 ].map(n => `assets/art/${n}.webp`);
 
 const SHELL = [
