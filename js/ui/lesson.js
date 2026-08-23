@@ -33,6 +33,8 @@ export async function renderLesson(root, [topicId]) {
 
     host.innerHTML = `
       <article class="slide">
+        ${i === 0 && topic.cover
+      ? `<img class="slide__cover" src="${topic.cover}" alt="" decoding="async">` : ''}
         <div class="slide__kicker">${s.kicker} · ${i + 1} з ${topic.slides.length}</div>
         <h2 class="slide__title">${s.title}</h2>
         <div class="slide__body">${s.html}</div>

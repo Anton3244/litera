@@ -192,7 +192,6 @@ function soonHtml(section) {
   return `
     <div class="tile tile--soon">
       ${section.cover ? `<img class="tile__cover" src="${section.cover}" alt="" loading="lazy">` : ''}
-      <div class="tile__veil"></div>
       <div class="tile__body">
         <div class="tile__title">${section.title}</div>
         <div class="tile__meta"><span>матеріали готуються</span></div>
@@ -210,7 +209,6 @@ function topicHtml(topic, s) {
       ${topic.cover
       ? `<img class="tile__cover" src="${topic.cover}" alt="" loading="lazy">`
       : `<span class="tile__glyph">${topic.icon}</span>`}
-      <span class="tile__veil"></span>
       <span class="tile__body">
         <span class="tile__title">${topic.title}</span>
         <span class="tile__meta">
