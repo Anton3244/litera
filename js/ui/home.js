@@ -212,9 +212,10 @@ function topicHtml(topic, s) {
       <span class="tile__body">
         <span class="tile__title">${topic.title}</span>
         <span class="tile__meta">
-          <span>${topic.author}</span>
-          <span style="color:${label.color}">· ${label.text}</span>
-          ${s?.due ? `<span style="color:var(--accent-2)">· ${s.due} на повтор</span>` : ''}
+          <span class="tile__author">${topic.author}</span>
+          ${s && s.state !== 'new'
+      ? `<span class="tile__state" style="color:${label.color}">· ${label.text}</span>` : ''}
+          ${s?.due ? `<span class="tile__state" style="color:var(--accent-2)">· ${s.due}</span>` : ''}
         </span>
       </span>
       ${s?.state === 'solid' ? '<span class="tile__done">✓</span>' : ''}
