@@ -1,7 +1,7 @@
 // Service worker: офлайн-режим і щоденне нагадування.
 // Піднімай CACHE_VERSION після зміни файлів — інакше браузер віддасть старі.
 
-const CACHE_VERSION = 'litera-v44';
+const CACHE_VERSION = 'litera-v45';
 
 const ART = [
   'award-first-lesson', 'award-perfect', 'award-reviewer', 'award-streak-3', 'award-streak-30',
@@ -30,6 +30,11 @@ const ART = [
   'state-stats-empty', 'state-streak-3', 'state-streak-30', 'state-streak-7',
 ].map(n => `assets/art/${n}.webp`);
 
+// Мініатюри для списку тем. Кешуємо саме їх: список показує всі 61 одразу,
+// а повні обкладинки потрібні лише на першому слайді відкритої теми.
+const THUMBS = ART.filter(p => p.includes('/cover-'))
+  .map(p => p.replace('assets/art/', 'assets/art/thumb/'));
+
 const SHELL = [
   './',
   'index.html',
@@ -38,6 +43,7 @@ const SHELL = [
   'assets/icon.svg',
   'assets/icon-192.png',
   ...ART,
+  ...THUMBS,
   'js/app.js',
   'js/db.js',
   'js/store.js',

@@ -177,6 +177,15 @@ function weekHtml() {
     </div>`).join('');
 }
 
+/**
+ * Шлях до зменшеної обкладинки. У списку їх 61 одразу, і повні файли —
+ * це два мегабайти й сорок мільйонів пікселів на декодування заради
+ * віконця 106×80. Мініатюри ще й вирівняні за яскравістю між собою.
+ */
+function thumb(cover) {
+  return cover ? cover.replace('assets/art/', 'assets/art/thumb/') : cover;
+}
+
 function sectionHtml(section, byId, i = 0) {
   const head = `
     <div class="section-h section-h--art">
@@ -191,7 +200,7 @@ function sectionHtml(section, byId, i = 0) {
 function soonHtml(section) {
   return `
     <div class="tile tile--soon">
-      ${section.cover ? `<img class="tile__cover" src="${section.cover}" alt="" loading="lazy">` : ''}
+      ${section.cover ? `<img class="tile__cover" src="${thumb(section.cover)}" alt="" loading="lazy" width="106" height="80">` : ''}
       <div class="tile__body">
         <div class="tile__title">${section.title}</div>
         <div class="tile__meta"><span>матеріали готуються</span></div>
@@ -207,7 +216,7 @@ function topicHtml(topic, s) {
     <button class="tile ${s?.state === 'solid' ? 'is-done' : ''} ${topic.cover ? '' : 'tile--plain'}"
             data-topic="${topic.id}">
       ${topic.cover
-      ? `<img class="tile__cover" src="${topic.cover}" alt="" loading="lazy">`
+      ? `<img class="tile__cover" src="${thumb(topic.cover)}" alt="" loading="lazy" width="106" height="80">`
       : `<span class="tile__glyph">${topic.icon}</span>`}
       <span class="tile__body">
         <span class="tile__title">${topic.title}</span>
