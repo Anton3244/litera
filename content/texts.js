@@ -45,7 +45,7 @@ export const TEXTS = {
   ],
 
   'franko-zakhar-berkut': [
-    { title: 'Захар Беркут', url: 'https://uk.wikisource.org/wiki/%D0%97%D0%B0%D1%85%D0%B0%D1%80_%D0%91%D0%B5%D1%80%D0%BA%D1%83%D1%82', source: 'Вікіджерела' },
+    { title: 'Захар Беркут', url: 'https://www.ukrlib.com.ua/books/printit.php?tid=645', source: 'УкрЛіб' },
   ],
 
   'holoborodko-nasha-mova': [
@@ -117,11 +117,11 @@ export const TEXTS = {
   ],
 
   'myrnyy-khiba-revut-voly': [
-    { title: 'Хіба ревуть воли, як ясла повні?', url: 'https://uk.wikisource.org/wiki/%D0%A5%D1%96%D0%B1%D0%B0_%D1%80%D0%B5%D0%B2%D1%83%D1%82%D1%8C_%D0%B2%D0%BE%D0%BB%D0%B8%2C_%D1%8F%D0%BA_%D1%8F%D1%81%D0%BB%D0%B0_%D0%BF%D0%BE%D0%B2%D0%BD%D1%96%3F', source: 'Вікіджерела' },
+    { title: 'Хіба ревуть воли, як ясла повні?', url: 'https://www.ukrlib.com.ua/books/printit.php?tid=983', source: 'УкрЛіб' },
   ],
 
   'nechuy-kaydasheva-simya': [
-    { title: 'Кайдашева сім\'я', url: 'https://uk.wikisource.org/wiki/%D0%9A%D0%B0%D0%B9%D0%B4%D0%B0%D1%88%D0%B5%D0%B2%D0%B0_%D1%81%D1%96%D0%BC%27%D1%8F', source: 'Вікіджерела' },
+    { title: 'Кайдашева сім\'я', url: 'https://www.ukrlib.com.ua/books/printit.php?tid=907', source: 'УкрЛіб' },
   ],
 
   'oles-poeziya': [
@@ -134,7 +134,7 @@ export const TEXTS = {
   ],
 
   'pidmohylnyy-misto': [
-    { title: 'Місто', url: 'https://uk.wikisource.org/wiki/%D0%9C%D1%96%D1%81%D1%82%D0%BE', source: 'Вікіджерела' },
+    { title: 'Місто', url: 'https://www.ukrlib.com.ua/books/printit.php?tid=76', source: 'УкрЛіб' },
   ],
 
   'rylsky-u-tepli-dni': [
@@ -146,7 +146,7 @@ export const TEXTS = {
   ],
 
   'shevchenko-kateryna': [
-    { title: 'Катерина', url: 'https://uk.wikisource.org/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%BD%D0%B0', source: 'Вікіджерела' },
+    { title: 'Катерина', url: 'https://www.ukrlib.com.ua/books/printit.php?tid=742', source: 'УкрЛіб' },
   ],
 
   'shevchenko-kavkaz': [
@@ -154,11 +154,11 @@ export const TEXTS = {
   ],
 
   'shevchenko-son': [
-    { title: 'Сон (У всякого своя доля)', url: 'https://uk.wikisource.org/wiki/%D0%A1%D0%BE%D0%BD_%28%D0%A3_%D0%B2%D1%81%D1%8F%D0%BA%D0%BE%D0%B3%D0%BE_%D1%81%D0%B2%D0%BE%D1%8F_%D0%B4%D0%BE%D0%BB%D1%8F%29', source: 'Вікіджерела' },
+    { title: 'Сон (У всякого своя доля)', url: 'https://www.ukrlib.com.ua/books/printit.php?tid=3979', source: 'УкрЛіб' },
   ],
 
   'shevchenko-zapovit': [
-    { title: 'Заповіт', url: 'https://uk.wikisource.org/wiki/%D0%97%D0%B0%D0%BF%D0%BE%D0%B2%D1%96%D1%82', source: 'Вікіджерела' },
+    { title: 'Заповіт', url: 'https://uk.wikisource.org/wiki/%D0%A1%D1%82%D1%80%D1%83%D0%BD%D0%B8/%D0%A2%D0%BE%D0%BC_1/%D0%97%D0%B0%D0%BF%D0%BE%D0%B2%D1%96%D1%82', source: 'Вікіджерела' },
   ],
 
   'skovoroda': [
