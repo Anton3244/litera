@@ -4,6 +4,7 @@
 import * as store from '../store.js';
 import { LETTERS, shuffle, vibrate, escapeHtml } from '../util.js';
 import { verdictSvg, xpBurstSvg } from './icons.js';
+import { mascotHtml } from './mascot.js';
 import { bumpStat, refreshStats, setHearts } from '../app.js';
 
 
@@ -27,13 +28,17 @@ export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, o
   let activeRow = 0;
   let shown = null;           // підготовлене питання (з перемішаними варіантами)
   let locked = false;
+  let inRow = 0;              // скільки правильних поспіль
 
   // Слухачі вішаємо на власну обгортку, а не на #view: якщо тест запустять
   // повторно, стара обгортка зникне разом зі слухачами.
   root.innerHTML = '';
   const wrap = document.createElement('div');
   wrap.innerHTML = `
-    <div class="progressbar"><i id="q-bar"></i></div>
+    <div class="qtop">
+      <span class="qmate" id="q-mate"></span>
+      <span class="progressbar"><i id="q-bar"></i></span>
+    </div>
     <div id="q-host"></div>
     <div class="spacer-fb"></div>
     <div id="fb-host"></div>`;
@@ -42,8 +47,28 @@ export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, o
   const host = wrap.querySelector('#q-host');
   const fbHost = wrap.querySelector('#fb-host');
   const bar = wrap.querySelector('#q-bar');
+  const mate = wrap.querySelector('#q-mate');
 
   if (useHearts) setHearts(hearts);
+
+  /**
+   * Настрій лелеки виводимо зі стану, а не смикаємо руками з кожного місця:
+   * так неможливо забути якусь гілку й лишити його з чужим обличчям.
+   */
+  function mateMood() {
+    if (locked) return null;                       // під час показу відповіді ним керує answer()
+    if (useHearts && hearts <= 1) return 'encourage';
+    if (inRow >= 3) return 'fire';
+    if (picked !== null || assignment.some(v => v !== null)) return 'hello';
+    return 'read';
+  }
+
+  /** Перемальовуємо тільки коли поза справді змінилась — інакше він смикається. */
+  function setMate(mood) {
+    if (!mood || mate.dataset.mood === mood) return;
+    mate.dataset.mood = mood;
+    mate.innerHTML = mascotHtml(mood, { size: 44, motion: 'none', className: 'mascot--pop' });
+  }
 
   function prepare(q) {
     if (q.type === 'match') {
@@ -67,6 +92,7 @@ export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, o
     startedAt = performance.now();
 
     bar.style.width = `${(index / questions.length) * 100}%`;
+    setMate(mateMood());
     host.innerHTML = shown.type === 'match' ? matchHtml(shown) : singleHtml(shown);
     // Перезапуск анімації: без зняття класу вона не програється вдруге.
     host.classList.remove('q-enter');
@@ -210,6 +236,7 @@ export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, o
       el.classList.toggle('is-picked', Number(el.dataset.opt) === i);
     }
     fbHost.innerHTML = checkBarHtml(true);
+    setMate(mateMood());
   }
 
   function pickRow(i) {
@@ -283,9 +310,11 @@ export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, o
     results.push({ id: q.id, topicId: q.topicId, correct: ok });
 
     if (ok) {
+      inRow++;
       bumpStat('xp');
       vibrate(15);
     } else {
+      inRow = 0;
       vibrate([25, 40, 25]);
       if (useHearts) {
         hearts--;
@@ -296,6 +325,7 @@ export function runQuiz(root, { questions, mode = 'lesson', useHearts = false, o
     refreshStats();
 
     fbHost.innerHTML = feedbackHtml(ok, q);
+    setMate(ok ? (inRow >= 3 ? 'fire' : 'happy') : 'sad');
     // Тільки тепер: сплеск міряє висоту панелі, а вона щойно змінилась.
     if (ok) showXpBurst();
   }

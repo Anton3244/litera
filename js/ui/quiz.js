@@ -6,8 +6,9 @@ import { loadTopic } from '../../content/index.js';
 import { runQuiz } from './quiz-engine.js';
 import { go, refreshStats } from '../app.js';
 import { shuffle, toast } from '../util.js';
-import { mascotHtml, moodForResult } from './mascot.js';
+import { mascotHtml } from './mascot.js';
 import { confettiSvg } from './icons.js';
+import { topicSeal } from './seal.js';
 import { divider } from './ornaments.js';
 
 export async function renderQuiz(root, [topicId]) {
@@ -50,15 +51,15 @@ function showResult(root, topic, results, ranOut) {
   root.innerHTML = `
     <div class="result">
       ${perfect ? `<div class="result__confetti">${confettiSvg(320)}</div>` : ''}
-      ${mascotHtml(moodForResult({ perfect, ranOut, score }),
-        { size: 132, motion: 'bob', className: 'mascot--pop result__art' })}
+      ${ranOut
+      ? mascotHtml('sad', { size: 132, motion: 'bob', className: 'mascot--pop result__art' })
+      : `<div class="result__seal">${topicSeal({ score, passed: score >= 0.8 })}</div>`}
       <h1 class="result__title">${mood.title}</h1>
       <p class="result__sub">${topic.title}</p>
 
-      <div class="result__grid">
-        <div class="result__cell"><b>${correct}/${total}</b><span>правильних</span></div>
-        <div class="result__cell"><b>${Math.round(score * 100)}%</b><span>результат</span></div>
-        <div class="result__cell"><b>+${correct * store.XP_CORRECT + bonus}</b><span>XP</span></div>
+      <div class="result__nums">
+        <span><b>${correct}/${total}</b> правильних</span>
+        <span><b>+${correct * store.XP_CORRECT + bonus}</b> XP</span>
       </div>
 
       ${fresh.length ? `<div class="card" style="text-align:left">
