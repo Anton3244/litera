@@ -34,6 +34,7 @@ for (const it of index) (byTopic[it.topicId] ??= []).push(it);
 const key = s => s.toLowerCase()
   .replace(/[’'`ʼ]/g, '')
   .replace(/[—–-]/g, ' ')
+  .replace(/…/g, ' ')          // одним знаком «…» проти трьох крапок у джерелі
   .replace(/[.,;:!?«»"()]/g, ' ')
   .replace(/\s+/g, ' ')
   .trim();

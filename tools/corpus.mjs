@@ -67,17 +67,28 @@ function strip(html) {
     .replace(/&[a-z]+;/gi, ' '));
 }
 
-/** УкрЛіб віддає cp1251 і ріже довгі твори на сторінки через &page=N. */
+/**
+ * УкрЛіб віддає cp1251 і ріже довгі твори на сторінки через &page=N.
+ *
+ * Зупинка — за відбитком початку тексту, а не за збігом сторінки цілком.
+ * Спершу порівнювалися цілі сторінки, і це не спрацювало жодного разу:
+ * на неіснуючій сторінці сайт віддає ту саму, але з дрібною відмінністю
+ * десь у розмітці. Через це кожен короткий вірш приїжджав повтореним
+ * сорок разів, а перевірка цитат усе одно «проходила» — підрядок же
+ * знаходився. 51 файл із 54 був роздутий саме так.
+ */
 function fetchUkrlib(url) {
   const parts = [];
+  const seen = new Set();
   for (let page = 1; page <= 40; page++) {
     const u = page === 1 ? url : `${url}&page=${page}`;
     const buf = get(u);
     if (!buf.length) break;
     const body = strip(new TextDecoder('windows-1251').decode(buf));
-    // Кінець настає, коли сторінка повторює попередню або порожня:
-    // сайт на неіснуючій сторінці віддає останню, а не 404.
-    if (!body || parts.includes(body)) break;
+    if (!body) break;
+    const mark = body.slice(0, 800).replace(/\s+/g, '');
+    if (seen.has(mark)) break;
+    seen.add(mark);
     parts.push(body);
   }
   return parts.join(NL);
