@@ -9,7 +9,7 @@
 //
 //   node tools/quotes.mjs <тека з текстами>
 
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, writeFileSync } from 'node:fs';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
 
@@ -44,6 +44,21 @@ let checked = 0; let missing = 0; let noText = 0;
 const bad = [];
 const suspectCorpus = [];
 
+// Звіт для людини, яка не мусить вірити мені на слово: поруч із нашим
+// рядком — той самий рядок із тексту твору й посилання, звідки він узятий.
+// Досить відкрити будь-який рядок і клацнути, щоб перевірити самому.
+const report = [];
+const reportPath = process.argv[3];
+
+/** Знаходить у тексті твору той рядок, який збігся з нашим. */
+function sourceLine(rawText, ourLine) {
+  const want = key(ourLine);
+  for (const l of rawText.split(String.fromCharCode(10))) {
+    if (key(l).includes(want) && l.trim()) return l.trim();
+  }
+  return null;
+}
+
 for (const meta of topics) {
   const mod = await import(pathToFileURL(join(ROOT, `content/topics/${meta.id}.js`)).href);
   const html = mod.default.slides.map(s => s.html).join('\n');
@@ -58,7 +73,9 @@ for (const meta of topics) {
 
   const texts = byTopic[meta.id];
   if (!texts) { noText += quotes.length; continue; }
-  const corpus = key(texts.map(t => readFileSync(join(corpusDir, t.name), 'utf8')).join('\n'));
+  const raw = texts.map(t => readFileSync(join(corpusDir, t.name), 'utf8')).join('\n');
+  const corpus = key(raw);
+  const srcUrl = (raw.match(/^# (https?:\/\/\S+)/m) || [])[1] || '';
 
   for (const q of quotes) {
     checked++;
@@ -66,6 +83,11 @@ for (const meta of topics) {
     // з різних місць твору, і тоді збіг цілим шматком нічого не скаже.
     const lines = q.split('\n').map(l => l.trim()).filter(l => key(l).length >= 12);
     const lost = lines.filter(l => !corpus.includes(key(l)));
+
+    for (const l of lines.filter(x => !lost.includes(x))) {
+      report.push({ topic: meta.id, title: meta.title, ours: l, src: sourceLine(raw, l), url: srcUrl });
+    }
+
     if (!lost.length) continue;
     // Коли не знайшовся жоден рядок — найімовірніше, у теці лежить не той
     // твір (перенаправлення, перелік видань, чужа редакція). Коли частина —
@@ -97,3 +119,26 @@ console.log(`  з розбіжністю: ${missing}`);
 console.log(`  з них підозра на неправильний файл: ${suspectCorpus.length}`);
 console.log(`  без тексту в теці (не звірено): ${noText}`);
 if (!checked) console.log('!! жодної цитати не звірено — перевірка нічого не робить');
+
+if (reportPath) {
+  const NL = String.fromCharCode(10);
+  const out = [
+    '# Звіт звіряння цитат',
+    '',
+    'Кожен рядок: що написано в застосунку, той самий рядок у тексті твору',
+    'і посилання на джерело. Відкрий будь-який і перевір сам — знання',
+    'предмета для цього не потрібне, досить порівняти два рядки.',
+    '',
+    `Звірено рядків: ${report.length}. Розбіжностей: ${missing}.`,
+    '',
+  ];
+  let last = '';
+  for (const r of report) {
+    if (r.title !== last) { out.push('', `## ${r.title}`, '', r.url ? `Джерело: ${r.url}` : '_джерела немає_', ''); last = r.title; }
+    const same = key(r.ours) === key(r.src || '');
+    out.push(`- **у нас:** ${r.ours}`);
+    out.push(`  **у тексті:** ${r.src || '—'}${same ? '' : '  ← слово в слово не збігається, лише по суті'}`);
+  }
+  writeFileSync(reportPath, out.join(NL), 'utf8');
+  console.log(`${NL}звіт для перевірки: ${reportPath}`);
+}
