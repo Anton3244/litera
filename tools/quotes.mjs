@@ -5,6 +5,16 @@
 // зворот. Читач такого не бачить, бо звучить правдоподібно. Машина бачить
 // одразу — якщо має поруч текст твору.
 //
+// Перевіряються два види цитат:
+//
+//   блокові — <div class="quote">, тобто винесені рядки твору;
+//   рядкові — те, що взято в «лапки» посеред нашого тексту.
+//
+// Друге додано після того, як у «Катерині» знайшлися дві вигадані цитати:
+// обидві стояли в лапках усередині абзацу, і блокова перевірка їх не бачила.
+// Рядкові шумніші — у лапках ходять і назви творів, і слова критиків, —
+// тому вони йдуть окремим списком і не змішуються з блоковими.
+//
 // Тексти бере з теки, яку наповнює tools/corpus.mjs.
 //
 //   node tools/quotes.mjs <тека з текстами>
@@ -59,6 +69,18 @@ function sourceLine(rawText, ourLine) {
   return null;
 }
 
+/**
+ * Назви творів теж стоять у лапках, і шукати їх у тексті самого твору
+ * безглуздо. Збираємо всі назви, які знаємо, щоб про них не питати.
+ */
+const TITLES = new Set(topics.map(t => key(t.title.replace(/^«|»$/g, ''))));
+
+/** Слова, після яких у лапках іде термін або переказ, а не рядок твору. */
+const NOT_A_QUOTE = /^(так|це|мов|ніби|тобто|наче)/i;
+
+const inlineChecked = [];
+const inlineLost = [];
+
 for (const meta of topics) {
   const mod = await import(pathToFileURL(join(ROOT, `content/topics/${meta.id}.js`)).href);
   const html = mod.default.slides.map(s => s.html).join('\n');
@@ -69,13 +91,32 @@ for (const meta of topics) {
       .replace(/<[^>]+>/g, '')
       .trim())
     .filter(Boolean);
-  if (!quotes.length) continue;
+
+  // Рядкові: усе між «», крім назв творів і надто коротких шматків.
+  const inline = [...html.replace(/<div class="quote">[\s\S]*?<\/div>/g, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .matchAll(/«([^«»]{12,220})»/g)]
+    .map(m => m[1].replace(/\s+/g, ' ').trim())
+    .filter(q => q.split(' ').length >= 4)
+    .filter(q => !TITLES.has(key(q)))
+    .filter(q => !NOT_A_QUOTE.test(q));
+
+  if (!quotes.length && !inline.length) continue;
 
   const texts = byTopic[meta.id];
-  if (!texts) { noText += quotes.length; continue; }
+  if (!texts) { noText += quotes.length + inline.length; continue; }
   const raw = texts.map(t => readFileSync(join(corpusDir, t.name), 'utf8')).join('\n');
   const corpus = key(raw);
   const srcUrl = (raw.match(/^# (https?:\/\/\S+)/m) || [])[1] || '';
+
+  for (const q of inline) {
+    inlineChecked.push(q);
+    const parts = q.split('/').map(x => x.trim()).filter(x => key(x).length >= 12);
+    const probe = parts.length ? parts : [q];
+    if (!probe.every(x => corpus.includes(key(x)))) {
+      inlineLost.push({ title: meta.title, quote: q, url: srcUrl });
+    }
+  }
 
   for (const q of quotes) {
     checked++;
@@ -114,11 +155,21 @@ if (bad.length) {
   }
   console.log('');
 }
+if (inlineLost.length) {
+  console.log('=== у лапках, але в тексті твору такого немає ===');
+  console.log('(частина — слова критиків або переказ; кожну треба відкрити)');
+  for (const b of inlineLost) console.log(`  ${b.title}: «${b.quote}»`);
+  console.log('');
+}
+
 console.log(`звірено цитат: ${checked}`);
 console.log(`  з розбіжністю: ${missing}`);
 console.log(`  з них підозра на неправильний файл: ${suspectCorpus.length}`);
 console.log(`  без тексту в теці (не звірено): ${noText}`);
+console.log(`звірено рядкових цитат: ${inlineChecked.length}`);
+console.log(`  не знайдено в тексті: ${inlineLost.length}`);
 if (!checked) console.log('!! жодної цитати не звірено — перевірка нічого не робить');
+if (!inlineChecked.length) console.log('!! жодної рядкової цитати не звірено — перевірка нічого не робить');
 
 if (reportPath) {
   const NL = String.fromCharCode(10);

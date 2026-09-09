@@ -22,7 +22,8 @@ const dump = process.argv.includes('--dump');
 const { SECTIONS } = await import(pathToFileURL(join(ROOT, 'content/index.js')).href);
 
 /** Поля паспорта, які взагалі можна звірити з довідником. */
-const FIELDS = ['Рік', 'Рік написання', 'Час створення', 'Жанр', 'Вид лірики', 'Збірка', 'Напрям', 'Присвята'];
+const FIELDS = ['Рік', 'Рік написання', 'Час створення', 'Дата', 'Перше видання',
+  'Повне видання', 'Жанр', 'Вид лірики', 'Збірка', 'Напрям', 'Присвята'];
 
 const strip = s => String(s)
   .replace(/<[^>]+>/g, '')

@@ -72,30 +72,37 @@ export const SECTIONS = [
       {
         id: 'kotlyarevsky-eneida', title: '«Енеїда»', author: 'Іван Котляревський',
         icon: '⛵', minutes: 13, cover: ART + 'cover-kotlyarevsky-eneida.webp',
+        verified: true,
       },
       {
         id: 'kotlyarevsky-natalka', title: '«Наталка Полтавка»', author: 'Іван Котляревський',
         icon: '🎭', minutes: 12, cover: ART + 'cover-kotlyarevsky-natalka.webp',
+        verified: true,
       },
       {
         id: 'shevchenko-kateryna', title: '«Катерина»', author: 'Тарас Шевченко',
         icon: '🌾', minutes: 14, cover: ART + 'cover-shevchenko-kateryna.webp',
+        verified: true,
       },
       {
         id: 'shevchenko-zapovit', title: '«Заповіт»', author: 'Тарас Шевченко',
         icon: '🕯️', minutes: 8, cover: ART + 'cover-shevchenko-zapovit.webp',
+        verified: true,
       },
       {
         id: 'shevchenko-kavkaz', title: '«Кавказ»', author: 'Тарас Шевченко',
         icon: '🏔️', minutes: 11, cover: ART + 'cover-shevchenko-kavkaz.webp',
+        verified: true,
       },
       {
         id: 'shevchenko-son', title: '«Сон»', author: 'Тарас Шевченко',
         icon: '💤', minutes: 12, cover: ART + 'cover-shevchenko-son.webp',
+        verified: true,
       },
       {
         id: 'shevchenko-i-mertvym', title: '«І мертвим, і живим…»', author: 'Тарас Шевченко',
         icon: '✉️', minutes: 11, cover: ART + 'cover-shevchenko-i-mertvym.webp',
+        verified: true,
       },
       {
         id: 'kulish-chorna-rada', title: '«Чорна рада»', author: 'Пантелеймон Куліш',
