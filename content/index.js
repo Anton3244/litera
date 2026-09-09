@@ -18,22 +18,27 @@ export const SECTIONS = [
       {
         id: 'obryadovi-pisni', title: 'Обрядові та побутові пісні', author: 'Різновиди народних пісень',
         icon: '🌻', minutes: 11, cover: ART + 'cover-folklore.webp',
+        verified: true,
       },
       {
         id: 'pisni-marusi-churay', title: 'Пісні Марусі Чурай', author: '«Віють вітри», «Засвіт встали козаченьки»',
         icon: '🎶', minutes: 9, cover: ART + 'cover-pisni-marusi-churay.webp',
+        verified: true,
       },
       {
         id: 'istorychni-pisni', title: 'Історичні пісні', author: '«Ой Морозе», «Чи не той то хміль»',
         icon: '⚔️', minutes: 9, cover: ART + 'cover-istorychni-pisni.webp',
+        verified: true,
       },
       {
         id: 'duma-marusya-bohuslavka', title: '«Дума про Марусю Богуславку»', author: 'Народна дума',
         icon: '🪕', minutes: 10, cover: ART + 'cover-duma-marusya-bohuslavka.webp',
+        verified: true,
       },
       {
         id: 'balada-oy-letila-strila', title: '«Ой летіла стріла»', author: 'Народна балада',
         icon: '🏹', minutes: 8, cover: ART + 'cover-balada-oy-letila-strila.webp',
+        verified: true,
       },
     ],
   },
@@ -45,14 +50,17 @@ export const SECTIONS = [
       {
         id: 'povist-mynulykh-lit', title: '«Повість минулих літ»', author: 'Нестор Літописець',
         icon: '📜', minutes: 11, cover: ART + 'cover-povist-mynulykh-lit.webp',
+        verified: true,
       },
       {
         id: 'slovo-o-polku', title: '«Слово про похід Ігорів»', author: 'Пам’ятка XII ст.',
         icon: '🛡️', minutes: 12, cover: ART + 'cover-slovo-o-polku.webp',
+        verified: true,
       },
       {
         id: 'skovoroda', title: 'Григорій Сковорода', author: 'Три твори з програми',
         icon: '🐝', minutes: 12, cover: ART + 'cover-skovoroda.webp',
+        verified: true,
       },
     ],
   },
@@ -321,6 +329,16 @@ for (const section of SECTIONS) {
 
 export const topicMeta = id => INDEX.get(id) ?? null;
 export const allTopicMeta = () => [...INDEX.values()];
+
+/**
+ * Чи звірено тему з першоджерелами.
+ *
+ * Поки перевірено не все, незвірені теми в застосунку закриті: краще
+ * менше матеріалу, ніж завчена неправда. Прапорець ставиться в SECTIONS
+ * вручну — тільки після того, як тему пройдено повністю.
+ */
+export const isVerified = id => Boolean(topicMeta(id)?.verified);
+export const verifiedTopicMeta = () => allTopicMeta().filter(m => m.verified);
 export const topicCount = () => INDEX.size;
 
 const loaded = new Map();
@@ -367,7 +385,13 @@ export async function loadTopic(id) {
   return topic;
 }
 
-/** Завантажує всі теми одразу — потрібно для тренування зі змішаними питаннями. */
-export async function loadAllTopics() {
-  return Promise.all(allTopicMeta().map(m => loadTopic(m.id)));
+/**
+ * Завантажує теми для тренування й денного плану.
+ *
+ * За умовчанням — тільки звірені: у змішаному тренуванні не має бути
+ * питань із тем, які ще ніхто не перевіряв.
+ */
+export async function loadAllTopics({ includeUnverified = false } = {}) {
+  const metas = includeUnverified ? allTopicMeta() : verifiedTopicMeta();
+  return Promise.all(metas.map(m => loadTopic(m.id)));
 }

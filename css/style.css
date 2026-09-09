@@ -830,3 +830,9 @@ select,input[type=time],input[type=number]{
 .qmate .mascot{display:block}
 .qtop .progressbar{flex:1;margin:0}
 @media (prefers-reduced-motion:reduce){ .qmate .mascot--pop{animation:none} }
+
+/* Тема, яку ще не звірено з першоджерелами. Не ховаємо її зовсім —
+   хай видно, що матеріал є і що він на черзі, — але відкрити не можна. */
+.tile--locked{opacity:.45;cursor:default}
+.tile--locked .tile__cover,.tile--locked .tile__glyph{filter:grayscale(1)}
+.tile--locked:active{transform:none}

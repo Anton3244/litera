@@ -15,6 +15,7 @@ import { renderDev } from './ui/dev.js';
 import { initReminders } from './notify.js';
 import { needsOnboarding, renderOnboarding } from './ui/onboarding.js';
 import { autoSync } from './sync.js';
+import { isVerified } from '../content/index.js';
 import { drainInbox } from './push.js';
 import { applyUpdates } from './updates.js';
 import { showWhatsNew } from './ui/whatsnew.js';
@@ -61,6 +62,18 @@ async function route() {
   const fresh = viewEl.cloneNode(false);
   viewEl.replaceWith(fresh);
   viewEl = fresh;
+
+  // Незвірену тему не відкриваємо й за прямим посиланням: інакше досить
+  // набрати #/topic/<id> руками, і сенс закриття зникає.
+  if ((name === 'topic' || name === 'quiz') && parts[1] && !isVerified(parts[1])) {
+    viewEl.innerHTML = `<div class="empty">
+      <span class="empty__emoji">🔒</span>
+      Цю тему ще не звірено з першоджерелами.<br>
+      Вона відкриється, коли перевірку буде завершено.
+      <div style="margin-top:18px"><button class="btn btn--primary" data-nav="home">На головну</button></div>
+    </div>`;
+    return;
+  }
 
   try {
     await entry.render(viewEl, parts.slice(1));

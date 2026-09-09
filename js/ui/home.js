@@ -2,8 +2,8 @@
 // а не двадцять дві теми одразу.
 
 import * as store from '../store.js';
-import { SECTIONS, loadAllTopics } from '../../content/index.js';
-import { plural, clamp, WEEKDAYS } from '../util.js';
+import { SECTIONS, loadAllTopics, isVerified } from '../../content/index.js';
+import { plural, clamp, WEEKDAYS, toast } from '../util.js';
 import { ringSvg, flameSvg } from './icons.js';
 import { levelBadge } from './badges.js';
 import { sectionBlob, divider } from './ornaments.js';
@@ -65,7 +65,14 @@ export async function renderHome(root) {
 
   root.addEventListener('click', e => {
     const topic = e.target.closest('[data-topic]');
-    if (topic) { go('topic/' + topic.dataset.topic); return; }
+    if (topic) {
+      if (topic.dataset.locked) {
+        toast('Тему ще не звірено з першоджерелами — вона відкриється після перевірки', 3600);
+        return;
+      }
+      go('topic/' + topic.dataset.topic);
+      return;
+    }
     const nav = e.target.closest('[data-go]');
     if (nav) { go(nav.dataset.go); return; }
     if (e.target.closest('#show-all')) {
@@ -213,8 +220,8 @@ function topicHtml(topic, s) {
   const pct = Math.round((s?.mastery ?? 0) * 100);
 
   return `
-    <button class="tile ${s?.state === 'solid' ? 'is-done' : ''} ${topic.cover ? '' : 'tile--plain'}"
-            data-topic="${topic.id}">
+    <button class="tile ${s?.state === 'solid' ? 'is-done' : ''} ${topic.cover ? '' : 'tile--plain'}${topic.verified ? '' : ' tile--locked'}"
+            data-topic="${topic.id}"${topic.verified ? '' : ' data-locked="1"'}>
       ${topic.cover
       ? `<img class="tile__cover" src="${thumb(topic.cover)}" alt="" loading="lazy" width="106" height="80">`
       : `<span class="tile__glyph">${topic.icon}</span>`}
@@ -222,8 +229,10 @@ function topicHtml(topic, s) {
         <span class="tile__title">${topic.title}</span>
         <span class="tile__meta">
           <span class="tile__author">${topic.author}</span>
-          ${s && s.state !== 'new'
-      ? `<span class="tile__state" style="color:${label.color}">· ${label.text}</span>` : ''}
+          ${!topic.verified
+      ? '<span class="tile__state" style="color:var(--text-faint)">· ще не перевірено</span>'
+      : s && s.state !== 'new'
+        ? `<span class="tile__state" style="color:${label.color}">· ${label.text}</span>` : ''}
           ${s?.due ? `<span class="tile__state" style="color:var(--accent-2)">· ${s.due}</span>` : ''}
         </span>
       </span>
