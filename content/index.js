@@ -107,26 +107,32 @@ export const SECTIONS = [
       {
         id: 'kulish-chorna-rada', title: '«Чорна рада»', author: 'Пантелеймон Куліш',
         icon: '⚜️', minutes: 14, cover: ART + 'cover-kulish-chorna-rada.webp',
+        verified: true,
       },
       {
         id: 'nechuy-kaydasheva-simya', title: '«Кайдашева сім’я»', author: 'Іван Нечуй-Левицький',
         icon: '🍐', minutes: 13, cover: ART + 'cover-nechuy-kaydasheva-simya.webp',
+        verified: true,
       },
       {
         id: 'myrnyy-khiba-revut-voly', title: '«Хіба ревуть воли, як ясла повні?»', author: 'Панас Мирний',
         icon: '🐂', minutes: 14, cover: ART + 'cover-myrnyy-khiba-revut-voly.webp',
+        verified: true,
       },
       {
         id: 'karpenko-karyy-martyn-borulya', title: '«Мартин Боруля»', author: 'Іван Карпенко-Карий',
         icon: '📋', minutes: 12, cover: ART + 'cover-karpenko-karyy-martyn-borulya.webp',
+        verified: true,
       },
       {
         id: 'franko-zakhar-berkut', title: '«Захар Беркут»', author: 'Іван Франко',
         icon: '🦅', minutes: 13, cover: ART + 'cover-franko-zakhar-berkut.webp',
+        verified: true,
       },
       {
         id: 'franko-poeziya', title: 'Поезія Івана Франка', author: '«Зів’яле листя», «Мойсей»',
         icon: '🍂', minutes: 12, cover: ART + 'cover-franko-poeziya.webp',
+        verified: true,
       },
     ],
   },

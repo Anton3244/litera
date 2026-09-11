@@ -76,11 +76,17 @@ function strip(html) {
  * десь у розмітці. Через це кожен короткий вірш приїжджав повтореним
  * сорок разів, а перевірка цитат усе одно «проходила» — підрядок же
  * знаходився. 51 файл із 54 був роздутий саме так.
+ *
+ * Скільки сторінок у творі, сайт пише сам: «Сторінка 2 з 65». Раніше цикл
+ * мав стелю в 40 сторінок і мовчки обрізав усе довше — «Хіба ревуть воли»,
+ * «Місто» й «Тигролови» лежали в теці без фіналу, і перевірки ганялися
+ * по 60% роману, звітуючи, що все гаразд. Тепер недокачаний твір — помилка.
  */
 function fetchUkrlib(url) {
   const parts = [];
   const seen = new Set();
-  for (let page = 1; page <= 40; page++) {
+  let total = 1;
+  for (let page = 1; page <= Math.max(total, 2) && page <= 400; page++) {
     const u = page === 1 ? url : `${url}&page=${page}`;
     const buf = get(u);
     if (!buf.length) break;
@@ -90,8 +96,25 @@ function fetchUkrlib(url) {
     if (seen.has(mark)) break;
     seen.add(mark);
     parts.push(body);
+    total = Math.max(total, declaredPages(body));
   }
+  if (parts.length < total) throw new Error(`скачано сторінок ${parts.length} із ${total}`);
   return parts.join(NL);
+}
+
+/** Скільки сторінок заявляє сам УкрЛіб; 1 — коли твір не поділено. */
+function declaredPages(text) {
+  let most = 1;
+  for (const m of text.matchAll(/Сторінка \d+ з (\d+)/g)) most = Math.max(most, +m[1]);
+  return most;
+}
+
+/** Чи всі заявлені сторінки є у файлі (перша не має напису «Сторінка 1 з N»). */
+function complete(text) {
+  const total = declaredPages(text);
+  const got = new Set([1]);
+  for (const m of text.matchAll(/Сторінка (\d+) з \d+/g)) got.add(+m[1]);
+  return got.size >= total;
 }
 
 /**
@@ -149,7 +172,10 @@ for (const [topicId, links] of Object.entries(TEXTS)) {
   for (const [i, link] of links.entries()) {
     const name = `${topicId}${links.length > 1 ? `-${i + 1}` : ''}.txt`;
     const path = join(outDir, name);
-    if (existsSync(path) && readFileSync(path, 'utf8').length > 400) {
+    // Із теки беремо лише цілий твір: обрізаний файл, що лишився від старої
+    // версії цього скрипта, качаємо наново, інакше помилка житиме вічно.
+    if (existsSync(path) && readFileSync(path, 'utf8').length > 400
+        && complete(readFileSync(path, 'utf8'))) {
       index.push({ topicId, name, title: link.title, chars: readFileSync(path, 'utf8').length });
       ok++;
       continue;
